@@ -1,0 +1,7 @@
+# Local working files — not part of the deployed site
+temporary screenshots/
+archive/
+Website Assets/*.docx
+node_modules/
+.DS_Store
+Thumbs.db
