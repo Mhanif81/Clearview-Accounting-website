@@ -88,6 +88,14 @@
     .btn-primary::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--blue-deep); opacity: 0; transition: opacity .25s ease; z-index: -1; }
     .btn-primary { isolation: isolate; }
     .btn-primary:hover::before { opacity: 1; }
+    /* Hero CTA: a light brand-blue glow round the edge that swells and fades every 5s */
+    .btn-glow::after { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -2; pointer-events: none; opacity: 0;
+      box-shadow: 0 0 16px 3px rgba(17,90,219,.38), 0 0 36px 8px rgba(0,113,188,.18);
+      animation: glow-pulse 5s ease-in-out 1.6s infinite; }
+    @keyframes glow-pulse {
+      0%, 60%, 100% { opacity: 0; }
+      30% { opacity: 1; }
+    }
     .btn-ghost { color: var(--navy); box-shadow: inset 0 0 0 1.5px var(--line); background: rgba(255,255,255,.5); }
     .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--navy); }
     .btn-light { background: #fff; color: var(--navy); box-shadow: 0 10px 24px -12px rgba(0,0,0,.4); }
@@ -232,9 +240,14 @@
     .photo { position: relative; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow-2); aspect-ratio: 4 / 3; isolation: isolate; }
     @media (min-width: 640px) { .photo { aspect-ratio: 4 / 5; } }
     .photo img { position: absolute; left: 0; top: -10%; width: 100%; height: 120%; object-fit: cover; will-change: transform; }
-    .photo .tint { position: absolute; inset: 0; background: var(--blue); mix-blend-mode: multiply; opacity: .35; }
-    .photo .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.6), transparent 55%); }
-    .photo figcaption { position: absolute; left: var(--s3); right: var(--s3); bottom: var(--s3); color: #fff; font-size: .9rem; line-height: 1.5; }
+    .photo img { object-position: 74% 55%; }
+    .photo .tint { position: absolute; inset: 0; background: var(--blue); mix-blend-mode: multiply; opacity: .18; }
+    /* Caption blends into the photo: a tall navy fade plus a soft blur that dissolves upwards */
+    .photo .shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(12,33,67,.9) 0%, rgba(12,33,67,.6) 22%, rgba(12,33,67,.2) 44%, transparent 62%); }
+    .photo .shade::before { content: ""; position: absolute; inset: auto 0 0; height: 42%;
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      -webkit-mask-image: linear-gradient(to top, #000 35%, transparent); mask-image: linear-gradient(to top, #000 35%, transparent); }
+    .photo figcaption { position: absolute; left: var(--s3); right: var(--s3); bottom: var(--s3); color: rgba(255,255,255,.84); font-size: .9rem; line-height: 1.5; text-shadow: 0 1px 14px rgba(12,33,67,.55); }
     .photo figcaption b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.6rem; text-transform: uppercase; line-height: 1.05; }
     .photo-badge { position: absolute; z-index: 2; top: var(--s3); right: var(--s3); background: #fff; color: var(--navy); border-radius: 20px; padding: 14px 18px; box-shadow: var(--shadow-3); text-align: center; }
     .photo-badge b { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 2.6rem; line-height: .9; color: var(--blue); }
@@ -257,7 +270,17 @@
     .stat > span { display: block; font-size: .82rem; color: var(--muted); margin-top: 8px; line-height: 1.35; }
 
     /* Services */
-    .services { background: var(--paper); }
+    .services { background: var(--paper); isolation: isolate; }
+    .services > .wrap { position: relative; z-index: 1; }
+    /* Grid pulse (vanilla port): hairline grid whose cells light where the pointer passes; JS sets --gp-h so it ends just above the tabs */
+    .grid-pulse { --gp-cell: 24px; --gp-line: rgba(12, 33, 67, .07); position: absolute; inset: 0 0 auto; height: var(--gp-h, 40%); z-index: 0; pointer-events: none; overflow: hidden;
+      background-image: linear-gradient(to right, var(--gp-line) 1px, transparent 1px), linear-gradient(to bottom, var(--gp-line) 1px, transparent 1px);
+      background-size: var(--gp-cell) var(--gp-cell);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 72%, transparent);
+              mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 72%, transparent); }
+    .grid-pulse canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* A halo in the section colour, so lit cells never crowd the letters */
+    .services .sec-head [data-grid-avoid] { text-shadow: 0 0 6px var(--paper), 0 0 14px var(--paper), 0 0 30px var(--paper), 0 0 52px var(--paper); }
     .sec-head { display: grid; gap: var(--s3); margin-bottom: var(--s6); }
     @media (min-width: 1024px) { .sec-head { grid-template-columns: 1.1fr .9fr; align-items: end; } }
     .tabs { display: inline-flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: #fff; border-radius: 999px; box-shadow: var(--shadow-1); position: relative; }
@@ -430,7 +453,7 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
       .js [data-reveal], .js .fade-in, .js .hero h1 .line > span { opacity: 1; transform: none; }
-      .strip-track { animation: none; }
+      .strip-track, .btn-glow::after { animation: none; }
     }
   </style>
 </head>
@@ -517,7 +540,7 @@
           </h1>
           <p class="lede mt-6 fade-in" style="--d:.45s">Complete, reliable and personal accounting for sole traders, growing companies and individuals. We handle the tax returns, payroll, VAT and filings, so you can get on with running your business.</p>
           <div class="hero-actions fade-in" style="--d:.55s">
-            <a class="btn btn-primary" href="#contact">Book a free consultation</a>
+            <a class="btn btn-primary btn-glow" href="#contact">Book a free consultation</a>
             <a class="btn btn-ghost" href="#services">See our services</a>
           </div>
           <div class="hero-proof fade-in" style="--d:.65s">
@@ -582,8 +605,7 @@
       <div class="wrap about-grid">
         <div class="relative" data-reveal="left">
           <figure class="photo">
-            <!-- Placeholder: replace with a real photo of the ClearView team -->
-            <img src="https://placehold.co/800x1000/13305F/E7EEFC?text=Team+photo" alt="The ClearView Accounting team at the Luton office" data-parallax="0.06" loading="lazy">
+            <img src="Website%20Assets/About%20bg.jpg" alt="A hiker and a dog looking out over a mountain range at sunrise" data-parallax="0.06" loading="lazy" decoding="async">
             <div class="tint" aria-hidden="true"></div>
             <div class="shade" aria-hidden="true"></div>
             <figcaption><b>More than accountants</b>Your dedicated partners in growth, here to give you clarity and peace of mind.</figcaption>
@@ -615,10 +637,11 @@
 
     <!-- SERVICES -->
     <section class="section services" id="services" aria-labelledby="services-title">
+      <div class="grid-pulse" aria-hidden="true"><canvas></canvas></div>
       <div class="wrap">
         <div class="sec-head">
-          <h2 class="display h-section" id="services-title" data-reveal>Expertise you can count on</h2>
-          <p class="lede" data-reveal style="--d:.08s">Personal tax, business accounting and strategic tax advice, tailored to your situation and goals. Choose the area you need help with.</p>
+          <h2 class="display h-section" id="services-title" data-reveal data-grid-avoid>Expertise you can count on</h2>
+          <p class="lede" data-reveal data-grid-avoid style="--d:.08s">Personal tax, business accounting and strategic tax advice, tailored to your situation and goals. Choose the area you need help with.</p>
         </div>
 
         <div class="tabs" role="tablist" aria-label="Service areas" data-reveal>
@@ -917,6 +940,128 @@
     addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
     addEventListener('resize', onScroll);
     onScroll();
+
+    // Grid pulse (vanilla port of the GridPulse component) behind the services heading.
+    // Cells take a brand blue where the pointer passes, a few light on their own,
+    // and cells right behind the words go faint. Sleeps when nothing is lit or off screen.
+    const gp = $('.grid-pulse'), gpTabs = $('#services .tabs');
+    if (gp && gpTabs) {
+      const section = gp.parentElement, wrap = gpTabs.offsetParent;
+      const paper = $('canvas', gp), ctx = paper.getContext('2d');
+      const CELL = 24, REACH = 2.6, AMBIENT = 2, MAX_LIT = 180;
+      // Hue runs down the field from a cyan-leaning blue to the brand blue (#115ADB ≈ 218°)
+      const HUE_TOP = 202, HUE_SPAN = 22, TINTS = [86, 78, 70, 62, 54];
+      const FAINT = .13, FADE = 2.2, PAD = 5, FADE_IN = 160, FADE_OUT = 750;
+      const easeOut = t => 1 - (1 - t) ** 2, easeIn = t => t * t;
+      let cols = 1, rows = 1, width = 0, height = 0, clear = [];
+      const cells = new Map();
+
+      // End just above the tabs. offsetTop ignores the tabs' reveal transform.
+      const fit = () => gp.style.setProperty('--gp-h', `${Math.round(wrap.offsetTop + gpTabs.offsetTop - 16)}px`);
+
+      // Protect the lines of text, not their boxes
+      const measureText = () => {
+        const b = gp.getBoundingClientRect();
+        clear = $$('[data-grid-avoid]', section).flatMap(node => {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          const lines = [...range.getClientRects()].filter(r => r.width > 0 && r.height > 0);
+          return (lines.length ? lines : [node.getBoundingClientRect()]).map(r =>
+            new DOMRect(r.left - b.left - PAD, r.top - b.top - PAD, r.width + PAD * 2, r.height + PAD * 2));
+        });
+      };
+      const measure = () => {
+        fit();
+        width = gp.clientWidth; height = gp.clientHeight;
+        cols = Math.max(1, Math.ceil(width / CELL)); rows = Math.max(1, Math.ceil(height / CELL));
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        paper.width = Math.round(width * dpr); paper.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        measureText();
+        wake();
+      };
+
+      const brightness = (col, row) => {
+        const x = col * CELL + CELL / 2, y = row * CELL + CELL / 2;
+        let nearest = Infinity;
+        for (const r of clear) {
+          nearest = Math.min(nearest, Math.hypot(Math.max(r.left - x, 0, x - r.right), Math.max(r.top - y, 0, y - r.bottom)));
+          if (nearest === 0) break;
+        }
+        return nearest === Infinity ? 1 : FAINT + (1 - FAINT) * Math.min(1, nearest / (FADE * CELL));
+      };
+      const ink = row => {
+        const t = rows > 1 ? Math.min(1, row / (rows - 1)) : 0;
+        return `hsl(${Math.round(HUE_TOP + t * HUE_SPAN)} 86% ${TINTS[Math.floor(Math.random() * TINTS.length)]}%)`;
+      };
+
+      let frame = 0;
+      const draw = now => {
+        frame = 0;
+        ctx.clearRect(0, 0, width, height);
+        for (const [key, c] of cells) {
+          let alpha;
+          if (now < c.until) alpha = easeOut(Math.min(1, (now - c.born) / FADE_IN));
+          else {
+            const t = (now - c.until) / FADE_OUT;
+            if (t >= 1) { cells.delete(key); continue; }
+            alpha = 1 - easeIn(t);
+          }
+          ctx.globalAlpha = alpha * c.dim;
+          ctx.fillStyle = c.colour;
+          ctx.fillRect(c.col * CELL + 1, c.row * CELL + 1, CELL - 1, CELL - 1);
+        }
+        ctx.globalAlpha = 1;
+        if (cells.size) frame = requestAnimationFrame(draw);
+      };
+      function wake() { if (!frame) frame = requestAnimationFrame(draw); }
+
+      const light = (col, row, hold) => {
+        if (col < 0 || row < 0 || col >= cols || row >= rows || cells.size >= MAX_LIT) return;
+        const key = `${col},${row}`, now = performance.now(), lit = cells.get(key);
+        if (lit && now < lit.until) return;
+        // A cell caught again while fading picks up from where it had got to
+        let born = now;
+        if (lit) born = now - (1 - Math.sqrt(easeIn(Math.min(1, (now - lit.until) / FADE_OUT)))) * FADE_IN;
+        cells.set(key, { col, row, colour: lit ? lit.colour : ink(row), dim: brightness(col, row), born, until: now + hold });
+        wake();
+      };
+
+      let visible = false, pending = 0, at = null;
+      const paint = () => {
+        pending = 0;
+        if (!at) return;
+        const cx = Math.floor(at.x / CELL), cy = Math.floor(at.y / CELL), span = Math.ceil(REACH);
+        for (let dy = -span; dy <= span; dy++) for (let dx = -span; dx <= span; dx++) {
+          const away = Math.hypot(dx, dy);
+          if (away > REACH || Math.random() > 1 - away / (REACH + .6)) continue;
+          light(cx + dx, cy + dy, 260 + Math.random() * 900);
+        }
+      };
+      // Listened for on the window: the grid sits under the content and never gets the pointer
+      const onMove = e => {
+        if (!visible) return;
+        const b = gp.getBoundingClientRect();
+        at = { x: e.clientX - b.left, y: e.clientY - b.top };
+        if (!pending) pending = requestAnimationFrame(paint);
+      };
+
+      new ResizeObserver(measure).observe(section);
+      fit();
+      if (!reduce) {
+        new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(gp);
+        const drift = () => {
+          setTimeout(drift, 1400 + Math.random() * 1800);
+          if (!visible || document.hidden) return;
+          for (let i = 0; i < AMBIENT; i++) light(Math.floor(Math.random() * cols), Math.floor(Math.random() * rows), 900 + Math.random() * 1600);
+        };
+        setTimeout(drift, 500);
+        addEventListener('pointermove', onMove, { passive: true });
+        // Lines of text move once the fonts arrive and the heading finishes its reveal
+        document.fonts?.ready.then(measureText).catch(() => {});
+        section.addEventListener('transitionend', e => { if (e.target.matches('[data-grid-avoid]')) measureText(); });
+      }
+    }
 
     // Mobile menu
     const menuBtn = $('.menu-btn'), menu = $('#mobile-menu');
