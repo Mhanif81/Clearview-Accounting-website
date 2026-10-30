@@ -157,10 +157,17 @@
         radial-gradient(40% 40% at 10% 90%, rgba(0,113,188,.10), transparent 70%),
         radial-gradient(30% 30% at 55% 0%, rgba(12,33,67,.06), transparent 70%),
         var(--paper); }
-    .hero-wave { position: absolute; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1.2s var(--ease-out); }
-    .hero-wave.is-ready { opacity: 1; }
-    .hero-wave canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-    .hero-wave::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(246,245,244,.62) 0%, rgba(246,245,244,.28) 48%, rgba(246,245,244,0) 72%), linear-gradient(to top, var(--paper) 0%, rgba(246,245,244,0) 22%); }
+    /* Skyline video band: JS sets --hv-top (below the fixed header) and --hv-h (ends just above the hero stats) */
+    .hero-video { position: absolute; left: 0; right: 0; top: var(--hv-top, 84px); height: var(--hv-h, 60%); z-index: -2; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 1.4s var(--ease-out);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+              mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent); }
+    .hero-video.is-ready { opacity: 1; }
+    .hero-video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; filter: saturate(1.35) contrast(1.1) brightness(1.03); }
+    /* Brand-blue colour treatment, then a paper wash on the text side so navy copy stays legible */
+    .hero-video .tint { position: absolute; inset: 0; background: var(--blue); mix-blend-mode: multiply; opacity: .1; }
+    .hero-video::after { content: ""; position: absolute; inset: 0;
+      background: linear-gradient(100deg, rgba(246,245,244,.92) 0%, rgba(246,245,244,.84) 44%, rgba(246,245,244,.18) 64%, transparent 78%); }
+    @media (max-width: 1023px) { .hero-video::after { background: rgba(246,245,244,.7); } }
     .hero-grid { display: grid; gap: var(--s6); align-items: center; }
     @media (min-width: 1024px) { .hero-grid { grid-template-columns: 1.25fr .9fr; gap: var(--s5); } }
     .hero-kicker { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: .9rem; color: var(--navy); background: #fff; padding: 8px 16px 8px 10px; border-radius: 999px; box-shadow: var(--shadow-1); }
@@ -179,8 +186,6 @@
     .hero-proof div { display: flex; flex-direction: column; }
     .hero-proof b { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2rem; line-height: 1; color: var(--navy); }
     .hero-proof span { font-size: .85rem; color: var(--muted); margin-top: 4px; }
-
-    .hero-mark { position: absolute; z-index: -1; right: -8vw; bottom: -6vw; width: min(70vw, 860px); color: var(--blue); opacity: .07; pointer-events: none; }
 
     /* Load-sequence fade for hero pieces */
     .js .fade-in { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform 1s var(--ease-out); transition-delay: var(--d, 0s); }
@@ -302,6 +307,27 @@
     .panel-intro .for span { font-size: .8rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.1); }
     .panel-intro .btn { margin-top: auto; align-self: flex-start; }
     .panel-intro .spacer { height: var(--s4); flex: none; }
+    .panel-intro .for span.is-on { background: var(--blue); }
+    /* Card deck: every card shares one grid cell; --pos (0 = front) sets how far back each one sits.
+       The next two cards peek out above the front card; the rest wait hidden at the back. */
+    .deck { display: grid; padding-top: 28px; }
+    .deck-card { grid-area: 1 / 1; --pos: 0; z-index: calc(10 - var(--pos)); transform-origin: 50% 0;
+      transform: translateY(calc(var(--pos) * -14px)) scale(calc(1 - var(--pos) * .05));
+      transition: transform .8s var(--spring), opacity .6s ease; }
+    .deck-card::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: calc(var(--pos) * .07); pointer-events: none; transition: opacity .6s ease; }
+    .deck-card[data-pos="3"], .deck-card[data-pos="4"] { opacity: 0; }
+    /* Two-tone deck: every other card is a deeper brand blue, with its glow moved to the top-left */
+    .deck-card:nth-child(even) { background: color-mix(in srgb, var(--navy) 58%, var(--blue-deep)); }
+    .deck-card:nth-child(even)::before { background: radial-gradient(75% 60% at 0% 0%, rgba(0,113,188,.55), transparent 70%); }
+    .deck-card:nth-child(even) .for span { background: rgba(255,255,255,.14); }
+    .deck-card:nth-child(even) .for span.is-on { background: #fff; color: var(--navy); }
+    /* Software and partners strip at the foot of the services section */
+    .stack { margin-top: var(--s6); padding-top: var(--s5); border-top: 1px solid var(--line); }
+    .stack-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: var(--navy); }
+    .stack-logos { margin-top: var(--s3); display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    @media (min-width: 768px) { .stack-logos { grid-template-columns: repeat(4, 1fr); gap: var(--s3); } }
+    .stack-logos li { display: grid; place-items: center; height: 120px; padding: var(--s2); background: #fff; border-radius: 20px; box-shadow: var(--shadow-1); }
+    .stack-logos img { max-height: 64px; max-width: 78%; width: auto; height: auto; }
     .svc-list { display: grid; gap: 12px; }
     @media (min-width: 640px) { .svc-list { grid-template-columns: 1fr 1fr; } }
     .svc { position: relative; display: flex; gap: 16px; padding: var(--s3); background: #fff; border-radius: 20px; box-shadow: var(--shadow-1); transition: transform .5s var(--spring); }
@@ -528,8 +554,10 @@
   <main id="main">
     <!-- HOME / HERO -->
     <section class="hero grain" id="home" aria-labelledby="hero-title">
-      <div class="hero-wave" id="hero-wave" aria-hidden="true"></div>
-      <svg class="hero-mark mark mark-anim" viewBox="528 0 644 520" aria-hidden="true" data-parallax="-0.12"><path class="check" fill="currentColor" d="M541 352c-10-7-11-25-1-34l56-45c10-7 25-5 35 2l137 100L1169 0v157L776 518z"/><path class="bar bar-1" fill="currentColor" d="M929 435l101-94v175H929z"/><path class="bar bar-2" fill="currentColor" d="M1066 308l103-95v303h-103z"/></svg>
+      <div class="hero-video" aria-hidden="true">
+        <video src="Website%20Assets/hero-video.mp4" muted playsinline preload="auto"></video>
+        <div class="tint"></div>
+      </div>
       <div class="wrap hero-grid">
         <div>
           <h1 class="display h-section" id="hero-title">
@@ -652,12 +680,43 @@
         </div>
 
         <div class="panel" id="panel-personal" role="tabpanel" aria-labelledby="tab-personal">
-          <div class="panel-intro on-dark">
-            <h3 class="display">Clarity for individuals</h3>
-            <p>We handle your tax returns with precision, identify every relief and deduction you're entitled to, and give proactive advice tailored to your goals.</p>
-            <div class="for"><span>Individuals</span><span>Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
-            <div class="spacer"></div>
-            <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+          <!-- Stacked deck: one card per audience, rotating every 7s (paused on hover/focus) -->
+          <div class="deck" data-deck aria-roledescription="carousel" aria-label="Tax insights for individuals, sole traders, landlords and subcontractors">
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 5">
+              <h3 class="display">Clarity for individuals</h3>
+              <p>We handle your tax returns with precision, identify every relief and deduction you're entitled to, and give proactive advice tailored to your goals.</p>
+              <div class="for"><span>Individuals</span><span>Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 5">
+              <h3 class="display">Claim the relief you're owed</h3>
+              <p>Paying into a pension or giving through Gift Aid? Higher-rate taxpayers can claim extra relief on both through their return, and it's one of the most commonly missed savings we find.</p>
+              <div class="for"><span class="is-on">Individuals</span><span>Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 5">
+              <h3 class="display">No surprises in January</h3>
+              <p>Payments on account can add half of next year's bill to your January payment, and with income over £50,000, Making Tax Digital now means quarterly updates. We plan for both.</p>
+              <div class="for"><span>Individuals</span><span class="is-on">Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 5">
+              <h3 class="display">Make your rentals pay</h3>
+              <p>Mortgage interest now earns a 20% tax credit rather than a deduction. We make sure every allowable cost, from repairs to letting fees, is claimed, and check how the property is best owned.</p>
+              <div class="for"><span>Individuals</span><span>Sole traders</span><span class="is-on">Landlords</span><span>Subcontractors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="5 of 5">
+              <h3 class="display">Get back what CIS takes</h3>
+              <p>The 20% deducted under CIS is often more than the tax you actually owe. Keep your payment statements and claim your expenses, and you could be due a refund at the end of the tax year.</p>
+              <div class="for"><span>Individuals</span><span>Sole traders</span><span>Landlords</span><span class="is-on">Subcontractors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
+            </div>
           </div>
           <div class="svc-list">
             <article class="svc"><span class="svc-ico"><svg><use href="#i-doc"/></svg></span><div><h4>Self Assessment</h4><p>Accurate preparation and filing, with every eligible relief and expense claimed so you pay only what you owe.</p></div></article>
@@ -668,12 +727,43 @@
         </div>
 
         <div class="panel" id="panel-business" role="tabpanel" aria-labelledby="tab-business" hidden>
-          <div class="panel-intro on-dark">
-            <h3 class="display">Driving your business forward</h3>
-            <p>We take the administration off your hands, keep you compliant and find opportunities for growth and savings, while you do what you do best.</p>
-            <div class="for"><span>Limited companies</span><span>Start-ups</span><span>Employers</span><span>Construction</span></div>
-            <div class="spacer"></div>
-            <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+          <!-- Stacked deck: one card per business type, rotating every 7s (paused on hover/focus) -->
+          <div class="deck" data-deck aria-roledescription="carousel" aria-label="Insights for limited companies, start-ups, employers and construction businesses">
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 5">
+              <h3 class="display">Driving your business forward</h3>
+              <p>We take the administration off your hands, keep you compliant and find opportunities for growth and savings, while you do what you do best.</p>
+              <div class="for"><span>Limited companies</span><span>Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 5">
+              <h3 class="display">Pay yourself the smart way</h3>
+              <p>Corporation Tax runs from 19% to 25% depending on profit. A planned mix of salary, dividends and company pension contributions can keep more of what your company earns in your hands.</p>
+              <div class="for"><span class="is-on">Limited companies</span><span>Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 5">
+              <h3 class="display">Start on the right foot</h3>
+              <p>Sole trader or limited company? The choice shapes your tax from day one. We'll set up your registration and bookkeeping, and plan ahead for VAT before turnover reaches £90,000.</p>
+              <div class="for"><span>Limited companies</span><span class="is-on">Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 5">
+              <h3 class="display">Payroll without penalties</h3>
+              <p>Every payday must be reported to HMRC in real time, and pension auto-enrolment starts with your first employee. Employment Allowance can also cut up to £10,500 off your employer National Insurance.</p>
+              <div class="for"><span>Limited companies</span><span>Start-ups</span><span class="is-on">Employers</span><span>Construction</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="5 of 5">
+              <h3 class="display">Stay on top of CIS</h3>
+              <p>Contractors must verify every subcontractor and file a CIS return by the 19th of each month, with penalties from £100 if it's late. A clean record can also earn gross payment status.</p>
+              <div class="for"><span>Limited companies</span><span>Start-ups</span><span>Employers</span><span class="is-on">Construction</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Get a quote for your business</a>
+            </div>
           </div>
           <div class="svc-list">
             <article class="svc"><span class="svc-ico"><svg><use href="#i-building"/></svg></span><div><h4>Company formation</h4><p>We handle the paperwork with Companies House and advise on the right structure from day one.</p></div></article>
@@ -686,12 +776,36 @@
         </div>
 
         <div class="panel" id="panel-tax" role="tabpanel" aria-labelledby="tab-tax" hidden>
-          <div class="panel-intro on-dark">
-            <h3 class="display">Strategic tax planning</h3>
-            <p>Proactive strategies to reduce your liabilities, uncover every eligible deduction and protect your financial position in a complex tax environment.</p>
-            <div class="for"><span>Business owners</span><span>Families</span><span>Investors</span></div>
-            <div class="spacer"></div>
-            <a class="btn btn-light" href="#contact">Book a tax planning call</a>
+          <!-- Stacked deck: one card per client type, rotating every 7s (paused on hover/focus) -->
+          <div class="deck" data-deck aria-roledescription="carousel" aria-label="Tax planning insights for business owners, families and investors">
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 4">
+              <h3 class="display">Strategic tax planning</h3>
+              <p>Proactive strategies to reduce your liabilities, uncover every eligible deduction and protect your financial position in a complex tax environment.</p>
+              <div class="for"><span>Business owners</span><span>Families</span><span>Investors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Book a tax planning call</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 4">
+              <h3 class="display">Plan your exit early</h3>
+              <p>Selling your business? Business Asset Disposal Relief can cut Capital Gains Tax to 18% on up to £1 million of gains, but the conditions must be met for two years before the sale.</p>
+              <div class="for"><span class="is-on">Business owners</span><span>Families</span><span>Investors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Book a tax planning call</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 4">
+              <h3 class="display">Protect what you pass on</h3>
+              <p>A married couple can leave up to £1 million, including the family home, free of Inheritance Tax. Gifts made early, starting with £3,000 a year exempt, can reduce the bill further.</p>
+              <div class="for"><span>Business owners</span><span class="is-on">Families</span><span>Investors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Book a tax planning call</a>
+            </div>
+            <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 4">
+              <h3 class="display">Shelter more of your returns</h3>
+              <p>With the Capital Gains Tax allowance at £3,000 and the dividend allowance at £500, where you hold investments matters. ISAs, pensions and your spouse's allowances can shelter far more.</p>
+              <div class="for"><span>Business owners</span><span>Families</span><span class="is-on">Investors</span></div>
+              <div class="spacer"></div>
+              <a class="btn btn-light" href="#contact">Book a tax planning call</a>
+            </div>
           </div>
           <div class="svc-list">
             <article class="svc"><span class="svc-ico"><svg><use href="#i-scissors"/></svg></span><div><h4>Tax planning</h4><p>Expert planning and preparation designed to maximise your savings, year after year.</p></div></article>
@@ -700,6 +814,17 @@
             <article class="svc"><span class="svc-ico"><svg><use href="#i-chart"/></svg></span><div><h4>Business planning &amp; forecasting</h4><p>Clear business plans and accurate forecasts to support funding and growth decisions.</p></div></article>
             <article class="svc wide"><span class="svc-ico"><svg><use href="#i-wallet"/></svg></span><div><h4>Cost management &amp; efficiency</h4><p>We review where your money goes and help you control costs to improve profitability.</p></div></article>
           </div>
+        </div>
+
+        <!-- Software and partners: four equal tiles across the full content width -->
+        <div class="stack" aria-labelledby="stack-title">
+          <h3 class="stack-title" id="stack-title" data-reveal>Software and partners we work with</h3>
+          <ul class="stack-logos">
+            <li data-reveal style="--d:0s"><img src="Website%20Assets/logos/acca.jpg" alt="ACCA" loading="lazy" decoding="async"></li>
+            <li data-reveal style="--d:.08s"><img src="Website%20Assets/logos/nest.jpg" alt="Nest (National Employment Savings Trust)" loading="lazy" decoding="async"></li>
+            <li data-reveal style="--d:.16s"><img src="Website%20Assets/logos/capium.png" alt="Capium" loading="lazy" decoding="async"></li>
+            <li data-reveal style="--d:.24s"><img src="Website%20Assets/logos/xero.png" alt="Xero" loading="lazy" decoding="async"></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -902,6 +1027,88 @@
     // Page-load sequence
     requestAnimationFrame(() => document.body.classList.add('is-loaded'));
     $$('.tick-item').forEach((li, i) => setTimeout(() => li.classList.add('is-done'), reduce ? 0 : 1100 + i * 380));
+
+    // Hero skyline video: sits between the header and the stats row and fades in (as a still first
+    // frame) once the entrance animations have played. It only plays while the page is scrolling,
+    // and stays a still frame for reduced motion.
+    const hv = $('.hero-video'), hvVideo = hv && $('video', hv), hvProof = $('.hero-proof');
+    if (hv && hvVideo && hvProof) {
+      const hero = hv.parentElement, header = $('.site-header');
+      const topIn = el => { let y = 0; for (; el && el !== hero; el = el.offsetParent) y += el.offsetTop; return y; };
+      const fitVideo = () => {
+        const top = header.offsetHeight;
+        hv.style.setProperty('--hv-top', `${top}px`);
+        hv.style.setProperty('--hv-h', `${Math.max(0, topIn(hvProof) - top - 8)}px`);
+      };
+      new ResizeObserver(fitVideo).observe(hero);
+      fitVideo();
+
+      // Advances at 5x speed (about 2s of scrolling for the 10s clip) while the page scrolls, pauses a moment after scrolling stops,
+      // and holds on its last frame once it has played through (no loop)
+      hvVideo.defaultPlaybackRate = hvVideo.playbackRate = 5;
+      let onScreen = true, settle = 0;
+      const stop = () => { clearTimeout(settle); hvVideo.pause(); };
+      new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (!onScreen) stop(); }).observe(hv);
+      const atEnd = () => hvVideo.ended || (hvVideo.duration && hvVideo.currentTime >= hvVideo.duration - .15);
+      const advance = (hold = 180) => {
+        if (atEnd()) return;
+        if (hvVideo.paused) hvVideo.play().catch(() => {});
+        clearTimeout(settle);
+        settle = setTimeout(stop, hold);
+      };
+      if (!reduce) addEventListener('scroll', () => { if (onScreen) advance(); }, { passive: true });
+
+      // Scroll lock: when the page opens at the top, scroll input drives the video instead of
+      // the page, and the page only starts scrolling once the video has played to the end.
+      // The lock is input-based (wheel, touch, scroll keys), not overflow: hidden, so there's no
+      // layout shift; dragging the scrollbar counts as choosing to move on and releases it, as do
+      // in-page links and video errors. Skipped for reduced motion and for deep links to a section
+      // further down; links to the top (#home, #top, #main) and reloads start locked at the top.
+      const topLink = ['', '#home', '#top', '#main'].includes(location.hash);
+      if (!reduce && topLink) {
+        // Don't let the browser restore an earlier scroll position over the lock
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        scrollTo(0, 0);
+        const keys = [' ', 'PageDown', 'ArrowDown', 'End', 'Spacebar'];
+        let locked = true, touchY = 0;
+        const onWheel = e => { e.preventDefault(); if (e.deltaY > 0) advance(); };
+        const onTouchStart = e => { touchY = e.touches[0].clientY; };
+        const onTouchMove = e => {
+          e.preventDefault();
+          const y = e.touches[0].clientY;
+          if (touchY - y > 2) advance(250);
+          touchY = y;
+        };
+        const onKey = e => {
+          if (!keys.includes(e.key) || e.target.closest('input, textarea, select, [contenteditable]')) return;
+          e.preventDefault();
+          advance(450);
+        };
+        const unlock = () => {
+          if (!locked) return;
+          locked = false;
+          removeEventListener('wheel', onWheel);
+          removeEventListener('touchstart', onTouchStart);
+          removeEventListener('touchmove', onTouchMove);
+          removeEventListener('keydown', onKey);
+        };
+        addEventListener('wheel', onWheel, { passive: false });
+        addEventListener('touchstart', onTouchStart, { passive: true });
+        addEventListener('touchmove', onTouchMove, { passive: false });
+        addEventListener('keydown', onKey);
+        hvVideo.addEventListener('ended', unlock);
+        hvVideo.addEventListener('error', unlock);
+        // 'ended' doesn't always fire when playback stops on the very last frame, so also release
+        // the lock once playback is within a few frames of the end
+        hvVideo.addEventListener('timeupdate', () => { if (atEnd()) unlock(); });
+        // Nav links, CTAs and the skip link still go where they point
+        document.addEventListener('click', e => { if (e.target.closest('a[href^="#"]')) unlock(); }, true);
+        // Dragging the scrollbar (the one way left to move the page) releases the lock
+        addEventListener('scroll', () => { if (scrollY > 50) unlock(); }, { passive: true });
+      }
+      const reveal = () => setTimeout(() => hv.classList.add('is-ready'), reduce ? 0 : 900);
+      if (hvVideo.readyState >= 2) reveal(); else hvVideo.addEventListener('loadeddata', reveal, { once: true });
+    }
 
     // Days until the next 31 January Self Assessment deadline
     const now = new Date();
@@ -1111,7 +1318,7 @@
         t.tabIndex = on ? 0 : -1;
         const panel = document.getElementById(t.getAttribute('aria-controls'));
         panel.hidden = !on;
-        if (on) $$('.svc, .panel-intro', panel).forEach((el, i) => {
+        if (on) $$('.svc, .panel-intro:not(.deck-card), .deck', panel).forEach((el, i) => {
           if (reduce) return;
           el.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
             { duration: 600, delay: i * 50, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
@@ -1131,6 +1338,33 @@
     const syncPill = () => movePill($('.tab[aria-selected="true"]'));
     addEventListener('resize', syncPill);
     document.fonts ? document.fonts.ready.then(syncPill) : syncPill();
+
+    // Insight decks (one per services tab): the front card tucks to the back every 7s.
+    // Pauses on hover/focus, while its tab is hidden or off screen, and never moves for reduced motion.
+    $$('[data-deck]').forEach(deck => {
+      const cards = $$('.deck-card', deck);
+      let front = 0, held = false, onScreen = false;
+      const place = () => cards.forEach((card, i) => {
+        const pos = (i - front + cards.length) % cards.length;
+        card.style.setProperty('--pos', pos);
+        card.dataset.pos = pos;
+        card.inert = pos !== 0;
+        card.setAttribute('aria-hidden', pos !== 0);
+      });
+      place();
+      if (reduce) return;
+      new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(deck);
+      const hold = on => () => { held = on; };
+      deck.addEventListener('pointerenter', hold(true));
+      deck.addEventListener('pointerleave', hold(false));
+      deck.addEventListener('focusin', hold(true));
+      deck.addEventListener('focusout', hold(false));
+      setInterval(() => {
+        if (held || !onScreen || document.hidden || deck.closest('[hidden]')) return;
+        front = (front + 1) % cards.length;
+        place();
+      }, 7000);
+    });
 
     // Testimonial carousel
     const slides = $$('.slide'), dotsWrap = $('.dots'), meter = $('.t-meter'), meterBar = $('i', meter);
@@ -1187,418 +1421,5 @@
   })();
   </script>
 
-  <script>
-  // Gradient wave behind the hero: a vanilla port of the GradientWave component (WebGL).
-  (() => {
-    const host = document.getElementById('hero-wave');
-    if (!host) return;
-
-    const COLORS = ['#DCE6FA', '#FFFFFF', '#8FB3F2', '#F2F6FD', '#3D7BE6', '#FFFFFF'];
-    const OPTS = {
-      shadowPower: 8, darkenTop: false, noiseSpeed: 0.00001, noiseFrequency: [0.0001, 0.0009],
-      deform: { incline: 0.5, noiseAmp: 250, noiseFlow: 5 },
-    };
-
-    const normalizeColor = hex => [((hex >> 16) & 255) / 255, ((hex >> 8) & 255) / 255, (255 & hex) / 255];
-
-    class MiniGl {
-      constructor(canvas) {
-        this.canvas = canvas;
-        this.meshes = [];
-        const gl = canvas.getContext('webgl', { antialias: true });
-        if (!gl) throw new Error('WebGL not supported');
-        this.gl = gl;
-        const context = gl, _miniGl = this;
-
-        this.Uniform = class {
-          constructor(e) {
-            this.type = 'float';
-            Object.assign(this, e);
-            this.typeFn = { float: '1f', int: '1i', vec2: '2fv', vec3: '3fv', vec4: '4fv', mat4: 'Matrix4fv' }[this.type] || '1f';
-          }
-          update(location) {
-            if (this.value === undefined || location === null) return;
-            const fn = `uniform${this.typeFn}`;
-            if (this.typeFn.indexOf('Matrix') === 0) context[fn](location, this.transpose || false, this.value);
-            else context[fn](location, this.value);
-          }
-          getDeclaration(name, type, length) {
-            if (this.excludeFrom === type) return '';
-            if (this.type === 'array') {
-              return this.value[0].getDeclaration(name, type, this.value.length) + `\nconst int ${name}_length = ${this.value.length};`;
-            }
-            if (this.type === 'struct') {
-              let n = name.replace('u_', '');
-              n = n.charAt(0).toUpperCase() + n.slice(1);
-              const fields = Object.entries(this.value).map(([k, u]) => u.getDeclaration(k, type).replace(/^uniform/, '')).join('');
-              return `uniform struct ${n}\n{\n${fields}\n} ${name}${length ? `[${length}]` : ''};`;
-            }
-            return `uniform ${this.type} ${name}${length ? `[${length}]` : ''};`;
-          }
-        };
-
-        this.Attribute = class {
-          constructor(e) {
-            this.type = context.FLOAT;
-            this.normalized = false;
-            this.buffer = context.createBuffer();
-            Object.assign(this, e);
-          }
-          update() {
-            if (!this.values) return;
-            context.bindBuffer(this.target, this.buffer);
-            context.bufferData(this.target, this.values, context.STATIC_DRAW);
-          }
-          attach(e, program) {
-            const n = context.getAttribLocation(program, e);
-            if (this.target === context.ARRAY_BUFFER) {
-              context.bindBuffer(this.target, this.buffer);
-              context.enableVertexAttribArray(n);
-              context.vertexAttribPointer(n, this.size, this.type, this.normalized, 0, 0);
-            }
-            return n;
-          }
-          use(n) {
-            context.bindBuffer(this.target, this.buffer);
-            if (this.target === context.ARRAY_BUFFER) {
-              context.enableVertexAttribArray(n);
-              context.vertexAttribPointer(n, this.size, this.type, this.normalized, 0, 0);
-            }
-          }
-        };
-
-        this.Material = class {
-          constructor(vertexShaders, fragments, uniforms = {}) {
-            this.uniforms = uniforms;
-            this.uniformInstances = [];
-            const getShader = (type, source) => {
-              const shader = context.createShader(type);
-              context.shaderSource(shader, source);
-              context.compileShader(shader);
-              if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) {
-                console.error(context.getShaderInfoLog(shader));
-                throw new Error('Shader compilation error');
-              }
-              return shader;
-            };
-            const decls = (u, type) => Object.entries(u).map(([k, v]) => v.getDeclaration(k, type)).join('\n');
-            const prefix = 'precision highp float;';
-            const vertexSource = `${prefix}
-              attribute vec4 position;
-              attribute vec2 uv;
-              attribute vec2 uvNorm;
-              ${decls(_miniGl.commonUniforms, 'vertex')}
-              ${decls(uniforms, 'vertex')}
-              ${vertexShaders}`;
-            const fragmentSource = `${prefix}
-              ${decls(_miniGl.commonUniforms, 'fragment')}
-              ${decls(uniforms, 'fragment')}
-              ${fragments}`;
-            this.program = context.createProgram();
-            context.attachShader(this.program, getShader(context.VERTEX_SHADER, vertexSource));
-            context.attachShader(this.program, getShader(context.FRAGMENT_SHADER, fragmentSource));
-            context.linkProgram(this.program);
-            if (!context.getProgramParameter(this.program, context.LINK_STATUS)) {
-              console.error(context.getProgramInfoLog(this.program));
-              throw new Error('Program linking error');
-            }
-            context.useProgram(this.program);
-            this.attachUniforms(undefined, _miniGl.commonUniforms);
-            this.attachUniforms(undefined, this.uniforms);
-          }
-          attachUniforms(name, uniforms) {
-            if (name === undefined) Object.entries(uniforms).forEach(([n, u]) => this.attachUniforms(n, u));
-            else if (uniforms.type === 'array') uniforms.value.forEach((u, i) => this.attachUniforms(`${name}[${i}]`, u));
-            else if (uniforms.type === 'struct') Object.entries(uniforms.value).forEach(([u, i]) => this.attachUniforms(`${name}.${u}`, i));
-            else this.uniformInstances.push({ uniform: uniforms, location: context.getUniformLocation(this.program, name) });
-          }
-        };
-
-        this.PlaneGeometry = class {
-          constructor() {
-            this.width = 1; this.height = 1; this.vertexCount = 0; this.xSegCount = 0; this.ySegCount = 0;
-            this.attributes = {
-              position: new _miniGl.Attribute({ target: context.ARRAY_BUFFER, size: 3 }),
-              uv: new _miniGl.Attribute({ target: context.ARRAY_BUFFER, size: 2 }),
-              uvNorm: new _miniGl.Attribute({ target: context.ARRAY_BUFFER, size: 2 }),
-              index: new _miniGl.Attribute({ target: context.ELEMENT_ARRAY_BUFFER, size: 3, type: context.UNSIGNED_SHORT }),
-            };
-          }
-          setTopology(xSegs = 1, ySegs = 1) {
-            this.xSegCount = xSegs; this.ySegCount = ySegs;
-            this.vertexCount = (xSegs + 1) * (ySegs + 1);
-            const a = this.attributes;
-            a.uv.values = new Float32Array(2 * this.vertexCount);
-            a.uvNorm.values = new Float32Array(2 * this.vertexCount);
-            a.index.values = new Uint16Array(3 * xSegs * ySegs * 2);
-            for (let y = 0; y <= ySegs; y++) {
-              for (let x = 0; x <= xSegs; x++) {
-                const i = y * (xSegs + 1) + x;
-                a.uv.values[2 * i] = x / xSegs;
-                a.uv.values[2 * i + 1] = 1 - y / ySegs;
-                a.uvNorm.values[2 * i] = (x / xSegs) * 2 - 1;
-                a.uvNorm.values[2 * i + 1] = 1 - (y / ySegs) * 2;
-                if (x < xSegs && y < ySegs) {
-                  const s = y * xSegs + x;
-                  a.index.values.set([i, i + 1 + xSegs, i + 1, i + 1, i + 1 + xSegs, i + 2 + xSegs], 6 * s);
-                }
-              }
-            }
-            a.uv.update(); a.uvNorm.update(); a.index.update();
-          }
-          setSize(width = 1, height = 1) {
-            this.width = width; this.height = height;
-            const pos = this.attributes.position;
-            pos.values = new Float32Array(3 * this.vertexCount);
-            const ox = width / -2, oy = height / -2, sw = width / this.xSegCount, sh = height / this.ySegCount;
-            for (let y = 0; y <= this.ySegCount; y++) {
-              for (let x = 0; x <= this.xSegCount; x++) {
-                const idx = y * (this.xSegCount + 1) + x;
-                pos.values[3 * idx] = ox + x * sw;
-                pos.values[3 * idx + 1] = -(oy + y * sh);
-                pos.values[3 * idx + 2] = 0;
-              }
-            }
-            pos.update();
-          }
-        };
-
-        this.Mesh = class {
-          constructor(geometry, material) {
-            this.geometry = geometry; this.material = material;
-            this.attributeInstances = Object.entries(geometry.attributes).map(([e, attribute]) => ({ attribute, location: attribute.attach(e, material.program) }));
-            _miniGl.meshes.push(this);
-          }
-          draw() {
-            context.useProgram(this.material.program);
-            this.material.uniformInstances.forEach(({ uniform, location }) => uniform.update(location));
-            this.attributeInstances.forEach(({ attribute, location }) => attribute.use(location));
-            context.drawElements(context.TRIANGLES, this.geometry.attributes.index.values.length, context.UNSIGNED_SHORT, 0);
-          }
-        };
-
-        const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-        this.commonUniforms = {
-          projectionMatrix: new this.Uniform({ type: 'mat4', value: identity }),
-          modelViewMatrix: new this.Uniform({ type: 'mat4', value: identity }),
-          resolution: new this.Uniform({ type: 'vec2', value: [1, 1] }),
-          aspectRatio: new this.Uniform({ type: 'float', value: 1 }),
-        };
-      }
-      setSize(w = 640, h = 480) {
-        this.width = w; this.height = h;
-        this.canvas.width = w; this.canvas.height = h;
-        this.gl.viewport(0, 0, w, h);
-        this.commonUniforms.resolution.value = [w, h];
-        this.commonUniforms.aspectRatio.value = w / h;
-      }
-      setOrthographicCamera() {
-        this.commonUniforms.projectionMatrix.value = [2 / this.width, 0, 0, 0, 0, 2 / this.height, 0, 0, 0, 0, -0.001, 0, 0, 0, 0, 1];
-      }
-      render() {
-        this.gl.clearColor(0, 0, 0, 0);
-        this.gl.clearDepth(1);
-        this.meshes.forEach(m => m.draw());
-      }
-    }
-
-    const VERTEX = `
-vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
-vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
-float snoise(vec3 v) {
-  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-  vec3 i  = floor(v + dot(v, C.yyy));
-  vec3 x0 = v - i + dot(i, C.xxx);
-  vec3 g = step(x0.yzx, x0.xyz);
-  vec3 l = 1.0 - g;
-  vec3 i1 = min(g.xyz, l.zxy);
-  vec3 i2 = max(g.xyz, l.zxy);
-  vec3 x1 = x0 - i1 + C.xxx;
-  vec3 x2 = x0 - i2 + C.yyy;
-  vec3 x3 = x0 - D.yyy;
-  i = mod289(i);
-  vec4 p = permute(permute(permute(i.z + vec4(0.0, i1.z, i2.z, 1.0)) + i.y + vec4(0.0, i1.y, i2.y, 1.0)) + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-  float n_ = 0.142857142857;
-  vec3 ns = n_ * D.wyz - D.xzx;
-  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-  vec4 x_ = floor(j * ns.z);
-  vec4 y_ = floor(j - 7.0 * x_);
-  vec4 x = x_ *ns.x + ns.yyyy;
-  vec4 y = y_ *ns.x + ns.yyyy;
-  vec4 h = 1.0 - abs(x) - abs(y);
-  vec4 b0 = vec4(x.xy, y.xy);
-  vec4 b1 = vec4(x.zw, y.zw);
-  vec4 s0 = floor(b0)*2.0 + 1.0;
-  vec4 s1 = floor(b1)*2.0 + 1.0;
-  vec4 sh = -step(h, vec4(0.0));
-  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-  vec3 p0 = vec3(a0.xy,h.x);
-  vec3 p1 = vec3(a0.zw,h.y);
-  vec3 p2 = vec3(a1.xy,h.z);
-  vec3 p3 = vec3(a1.zw,h.w);
-  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-  m = m * m;
-  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-}
-vec3 blendNormal(vec3 base, vec3 blend) { return blend; }
-vec3 blendNormal(vec3 base, vec3 blend, float opacity) { return (blend * opacity + base * (1.0 - opacity)); }
-varying vec3 v_color;
-void main() {
-  float time = u_time * u_global.noiseSpeed;
-  vec2 noiseCoord = resolution * uvNorm * u_global.noiseFreq;
-  float tilt = resolution.y / 2.0 * uvNorm.y;
-  float incline = resolution.x * uvNorm.x / 2.0 * u_vertDeform.incline;
-  float offset = resolution.x / 2.0 * u_vertDeform.incline * mix(u_vertDeform.offsetBottom, u_vertDeform.offsetTop, uv.y);
-  float noise = snoise(vec3(
-    noiseCoord.x * u_vertDeform.noiseFreq.x + time * u_vertDeform.noiseFlow,
-    noiseCoord.y * u_vertDeform.noiseFreq.y,
-    time * u_vertDeform.noiseSpeed + u_vertDeform.noiseSeed
-  )) * u_vertDeform.noiseAmp;
-  noise *= 1.0 - pow(abs(uvNorm.y), 2.0);
-  noise = max(0.0, noise);
-  vec3 pos = vec3(position.x, position.y + tilt + incline + noise - offset, position.z);
-  v_color = u_baseColor;
-  for (int i = 0; i < u_waveLayers_length; i++) {
-    if (u_active_colors[i + 1] == 1.) {
-      WaveLayers layer = u_waveLayers[i];
-      float layerNoise = smoothstep(layer.noiseFloor, layer.noiseCeil,
-        snoise(vec3(
-          noiseCoord.x * layer.noiseFreq.x + time * layer.noiseFlow,
-          noiseCoord.y * layer.noiseFreq.y,
-          time * layer.noiseSpeed + layer.noiseSeed
-        )) / 2.0 + 0.5);
-      v_color = blendNormal(v_color, layer.color, pow(layerNoise, 4.));
-    }
-  }
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-}`;
-
-    const FRAGMENT = `
-varying vec3 v_color;
-void main() {
-  vec3 color = v_color;
-  if (u_darken_top == 1.0) {
-    vec2 st = gl_FragCoord.xy/resolution.xy;
-    color.g -= pow(st.y + sin(-12.0) * st.x, u_shadow_power) * 0.4;
-  }
-  gl_FragColor = vec4(color, 1.0);
-}`;
-
-    class Gradient {
-      constructor(canvas, colors, container) {
-        this.time = 0; this.last = 0; this.isPlaying = false;
-        this.container = container;
-        this.minigl = new MiniGl(canvas);
-        const U = this.minigl.Uniform;
-        const c = colors.map(hex => normalizeColor(parseInt(hex.replace('#', '0x'), 16)));
-        const uniforms = {
-          u_time: new U({ value: 0 }),
-          u_shadow_power: new U({ value: 5 }),
-          u_darken_top: new U({ value: 0 }),
-          u_active_colors: new U({ value: [1, 1, 1, 1], type: 'vec4' }),
-          u_global: new U({ type: 'struct', value: {
-            noiseFreq: new U({ value: [0.00014, 0.00029], type: 'vec2' }),
-            noiseSpeed: new U({ value: 0.000005 }),
-          } }),
-          u_vertDeform: new U({ type: 'struct', excludeFrom: 'fragment', value: {
-            incline: new U({ value: 0 }),
-            offsetTop: new U({ value: -0.5 }),
-            offsetBottom: new U({ value: -0.5 }),
-            noiseFreq: new U({ value: [3, 4], type: 'vec2' }),
-            noiseAmp: new U({ value: 320 }),
-            noiseSpeed: new U({ value: 10 }),
-            noiseFlow: new U({ value: 3 }),
-            noiseSeed: new U({ value: 5 }),
-          } }),
-          u_baseColor: new U({ value: c[0], type: 'vec3', excludeFrom: 'fragment' }),
-          u_waveLayers: new U({ value: [], excludeFrom: 'fragment', type: 'array' }),
-        };
-        for (let i = 1; i < c.length; i++) {
-          uniforms.u_waveLayers.value.push(new U({ type: 'struct', value: {
-            color: new U({ value: c[i], type: 'vec3' }),
-            noiseFreq: new U({ value: [2 + i / c.length, 3 + i / c.length], type: 'vec2' }),
-            noiseSpeed: new U({ value: 11 + 0.3 * i }),
-            noiseFlow: new U({ value: 6.5 + 0.3 * i }),
-            noiseSeed: new U({ value: 5 + 10 * i }),
-            noiseFloor: new U({ value: 0.1 }),
-            noiseCeil: new U({ value: 0.63 + 0.07 * i }),
-          } }));
-        }
-        const material = new this.minigl.Material(VERTEX, FRAGMENT, uniforms);
-        this.mesh = new this.minigl.Mesh(new this.minigl.PlaneGeometry(), material);
-        this.resize();
-      }
-      resize() {
-        // Sized to the hero rather than the window, so the wave fills exactly the section behind it.
-        const width = Math.max(1, Math.round(this.container.clientWidth));
-        const height = Math.max(1, Math.round(this.container.clientHeight));
-        this.minigl.setSize(width, height);
-        this.minigl.setOrthographicCamera();
-        this.mesh.geometry.setTopology(Math.ceil(width * 0.02), Math.ceil(height * 0.05));
-        this.mesh.geometry.setSize(width, height);
-        this.mesh.material.uniforms.u_shadow_power.value = width < 600 ? 5 : 6;
-        if (!this.isPlaying) this.minigl.render();
-      }
-      animate = timestamp => {
-        if (!this.isPlaying) return;
-        this.time += Math.min(timestamp - this.last, 1000 / 15);
-        this.last = timestamp;
-        this.mesh.material.uniforms.u_time.value = this.time;
-        this.minigl.render();
-        this.animationId = requestAnimationFrame(this.animate);
-      };
-      start() {
-        if (this.isPlaying) return;
-        this.isPlaying = true;
-        this.last = performance.now();
-        this.animationId = requestAnimationFrame(this.animate);
-      }
-      stop() {
-        this.isPlaying = false;
-        if (this.animationId) cancelAnimationFrame(this.animationId);
-      }
-    }
-
-    const canvas = document.createElement('canvas');
-    host.appendChild(canvas);
-    let gradient;
-    try {
-      gradient = new Gradient(canvas, COLORS, host);
-      const u = gradient.mesh.material.uniforms;
-      u.u_shadow_power.value = OPTS.shadowPower;
-      u.u_darken_top.value = OPTS.darkenTop ? 1 : 0;
-      u.u_global.value.noiseFreq.value = OPTS.noiseFrequency;
-      u.u_global.value.noiseSpeed.value = OPTS.noiseSpeed;
-      Object.entries(OPTS.deform).forEach(([k, v]) => { u.u_vertDeform.value[k].value = v; });
-    } catch (error) {
-      // No WebGL: the hero keeps its CSS gradient background.
-      console.error('Failed to initialise gradient:', error);
-      canvas.remove();
-      return;
-    }
-
-    // Draw a still frame with time advanced so the first paint already shows the waves.
-    gradient.time = 4000;
-    gradient.mesh.material.uniforms.u_time.value = gradient.time;
-    gradient.minigl.render();
-    host.classList.add('is-ready');
-
-    new ResizeObserver(() => gradient.resize()).observe(host);
-
-    // Hold the still frame until the hero's entrance animations finish, so the two don't compete for frames.
-    const motion = matchMedia('(prefers-reduced-motion: reduce)');
-    let onScreen = true, settled = false;
-    const sync = () => (settled && onScreen && !motion.matches ? gradient.start() : gradient.stop());
-    new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; sync(); }).observe(host);
-    motion.addEventListener('change', sync);
-    setTimeout(() => { settled = true; sync(); }, 1800);
-  })();
-  </script>
 </body>
 </html>
