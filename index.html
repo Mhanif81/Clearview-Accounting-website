@@ -65,7 +65,8 @@
     .section { padding-block: var(--section); position: relative; }
 
     /* Type scale */
-    .display { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.03em; line-height: .9; }
+    /* Headings are set in sentence case, as written in the markup */
+    .display { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: .9; }
     .h-hero { font-size: clamp(3.4rem, 10.5vw, 8.25rem); }
     .h-section { font-size: clamp(2.6rem, 6vw, 4.75rem); }
     .h-card { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.6rem; line-height: 1.1; letter-spacing: -0.01em; }
@@ -112,8 +113,7 @@
 
     /* Header */
     .site-header { position: fixed; inset: 0 0 auto 0; z-index: 60; }
-    .site-header::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.86); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); box-shadow: 0 1px 0 var(--line), 0 12px 32px -20px rgba(12,33,67,.25); opacity: 0; transition: opacity .35s ease; }
-    .site-header.is-scrolled::before { opacity: 1; }
+    .site-header::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.86); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); box-shadow: 0 1px 0 var(--line), 0 12px 32px -20px rgba(12,33,67,.25); }
     .header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 84px; }
     .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--logo); border-radius: 8px; transition: transform .45s var(--spring); }
     .brand:hover { transform: translateY(-1px); }
@@ -123,7 +123,7 @@
     .brand-word b { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.01em; }
     .brand-word span { font-weight: 500; font-size: .62rem; letter-spacing: .32em; margin-top: 4px; }
     .nav { display: none; }
-    .nav a { position: relative; padding: 10px 12px; white-space: nowrap; font-size: calc(.9rem + .5pt); font-weight: 500; color: var(--navy); border-radius: 8px; transition: opacity .2s ease; }
+    .nav a { position: relative; padding: 10px 12px; white-space: nowrap; font-size: calc(.9rem + .5pt); font-weight: 700; color: var(--navy); border-radius: 8px; transition: opacity .2s ease; }
     .nav a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; border-radius: 2px; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--spring); }
     .nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); }
     .nav a:active { opacity: .6; }
@@ -164,10 +164,12 @@
     /* Hero slideshow: every slide shares one grid cell (bottom-aligned, so the copy always sits on the
        buttons). The active slide's lines rise in one after another; --hs-base delays that after a change
        so the outgoing slide can fade first. */
-    .hero-slides { display: grid; margin-top: var(--s3); }
+    .hero-slides { position: relative; display: grid; margin-top: var(--s3); }
     .hero-slide { grid-area: 1 / 1; align-self: end; transition: opacity .45s ease; }
     .hero-slide:not(.is-active) { opacity: 0; pointer-events: none; }
-    .hs-title { color: var(--navy); text-transform: none; letter-spacing: -0.01em; }
+    .hs-title { color: #fff; }
+    /* Faint navy shadow lifts the white description off busy parts of the slide photos */
+    .hero-slide .lede { color: #fff; font-weight: 600; text-shadow: 0 1px 2px rgba(8,18,38,.55), 0 2px 12px rgba(8,18,38,.45); }
     .hs-title .line { display: block; overflow: hidden; padding-bottom: .04em; }
     .hs-title .line > span { display: block; }
     .hs-title .blue { color: var(--blue); }
@@ -178,35 +180,32 @@
     .js .is-loaded .hero-slide.is-active .line:nth-child(4) > span { transition-delay: calc(var(--hs-base, 0s) + .3s); }
     .js .hero-slide .lede { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform 1s var(--ease-out); }
     .js .is-loaded .hero-slide.is-active .lede { opacity: 1; transform: none; transition-delay: calc(var(--hs-base, 0s) + .45s); }
-    /* One background per slide, cross-fading over the hero's own gradients. Each is drawn in brand blues
-       and fades out towards the copy on the left; swap in a photo per slide later if wanted. */
     .hero-bgs { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-    .hero-bg { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease;
-      -webkit-mask-image: linear-gradient(90deg, transparent 12%, #000 62%);
-              mask-image: linear-gradient(90deg, transparent 12%, #000 62%); }
-    .hero-bg.is-active { opacity: 1; }
-    .hero-bg--mtd { background:
-      repeating-linear-gradient(90deg, rgba(12,71,180,.09) 0 1px, transparent 1px 160px),
-      radial-gradient(50% 60% at 92% 12%, rgba(17,90,219,.24), transparent 70%),
-      radial-gradient(40% 40% at 70% 100%, rgba(12,33,67,.08), transparent 70%); }
-    .hero-bg--cloud { background:
-      radial-gradient(26% 22% at 68% 16%, rgba(0,113,188,.18), transparent 70%),
-      radial-gradient(22% 20% at 84% 10%, rgba(17,90,219,.2), transparent 70%),
-      radial-gradient(30% 26% at 94% 32%, rgba(0,113,188,.16), transparent 70%),
-      radial-gradient(60% 50% at 80% 100%, rgba(12,33,67,.1), transparent 70%); }
-    .hero-bg--auto { background:
-      repeating-linear-gradient(135deg, rgba(17,90,219,.08) 0 1px, transparent 1px 28px),
-      radial-gradient(55% 60% at 100% 85%, rgba(17,90,219,.22), transparent 70%); }
-    .hero-bg--plan { background:
-      repeating-radial-gradient(circle at 80% 45%, rgba(12,71,180,.1) 0 1px, transparent 1px 64px),
-      radial-gradient(45% 55% at 80% 45%, rgba(17,90,219,.2), transparent 70%); }
-    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: var(--s4); }
+    /* City skyline under every slide: a brand-blue multiply tint, then a black tint that fades in from
+       85% of the way down the tick card (--fade-start, set from JS) to solid at the marquee strip */
+    /* Starts below the 84px header bar */
+    .hero-photo { position: absolute; inset: 84px 0 0; background: url("Website%20Assets/london_skyline_4k_16x9.jpg") 70% 100% / cover no-repeat; filter: saturate(.75); }
+    .hero-photo::before, .hero-photo::after { content: ""; position: absolute; inset: 0; }
+    .hero-photo::before { background: rgba(17,90,219,.16); mix-blend-mode: multiply; }
+    /* Black fade at the bottom, over an even navy shade across the whole photo that lifts the white hero text */
+    .hero-photo::after { background: linear-gradient(180deg, rgba(0,0,0,0) var(--fade-start, 70%), #000 100%), rgba(8,18,38,.25); }
+    /* Per-slide photos: same box and treatment as the skyline, cross-fading in over it while their slide
+       (data-hs-photo = slide index) is showing */
+    .hero-photo[data-hs-photo] { opacity: 0; transition: opacity 1.2s ease; }
+    .hero-photo[data-hs-photo].is-active { opacity: 1; }
+    .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
+    .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
+    .hero-photo--auto { background-image: url("Website%20Assets/hero-advice.jpg"); background-position: 50% 50%; }
+    .hero-photo--plan { background-image: url("Website%20Assets/hero-plan.jpg"); background-position: 50% 50%; }
+    /* Same font size and max width as the .lede above, so 58ch matches and the controls (pushed right)
+       end flush with the description's right edge */
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: var(--s4); max-width: 58ch; font-size: clamp(1.05rem, 1.4vw, 1.2rem); }
     /* Slideshow controls: previous, next and play/pause, then a segmented meter (one bar per slide) */
-    .hero-ctrls { display: flex; gap: 8px; }
-    .hero-ctrl { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; color: var(--navy); background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1.5px var(--line), 0 8px 20px -14px rgba(12,33,67,.5); transition: transform .4s var(--spring), background-color .2s; }
-    .hero-ctrl:hover { transform: scale(1.06); background-color: #fff; }
+    .hero-ctrls { display: flex; gap: 8px; margin-left: auto; }
+    .hero-ctrl { width: 49.4px; height: 49.4px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #4A4A52; box-shadow: 0 8px 20px -12px rgba(12,33,67,.6); transition: transform .4s var(--spring), background-color .2s; }
+    .hero-ctrl:hover { transform: scale(1.06); background-color: #5A5A63; }
     .hero-ctrl:active { transform: scale(.94); }
-    .hero-ctrl svg { width: 20px; height: 20px; }
+    .hero-ctrl svg { width: 19px; height: 19px; }
     .hero-ctrl .i-play, .hero-ctrl.is-paused .i-pause { display: none; }
     .hero-ctrl.is-paused .i-play { display: block; }
     .hero-meter { display: flex; gap: 6px; margin-top: 20px; }
@@ -216,20 +215,16 @@
     .hero-meter i.is-active b { animation: hero-meter 8s linear forwards; }
     .hero-meter.is-paused i.is-active b { animation-play-state: paused; }
     @keyframes hero-meter { to { transform: scaleX(1); } }
-    .hero-proof { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s5); margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--line); }
-    .hero-proof div { display: flex; flex-direction: column; }
-    .hero-proof b { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2rem; line-height: 1; color: var(--navy); }
-    .hero-proof span { font-size: .85rem; color: var(--muted); margin-top: 4px; }
 
     /* Load-sequence fade for hero pieces */
     .js .fade-in { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform 1s var(--ease-out); transition-delay: var(--d, 0s); }
     .js .is-loaded .fade-in { opacity: 1; transform: none; }
 
     /* Hero checklist card */
-    .tick-card { position: relative; background: var(--navy); color: #fff; border-radius: 28px; padding: var(--s4); box-shadow: var(--shadow-3); overflow: hidden; isolation: isolate; }
+    .tick-card { position: relative; background: var(--navy); color: #fff; border-radius: 28px; padding: var(--s4); box-shadow: 0 2px 4px rgba(12, 33, 67, .06), 0 24px 48px -16px rgba(12, 33, 67, .28); overflow: hidden; isolation: isolate; }
     .tick-card::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(80% 60% at 100% 0%, rgba(17,90,219,.55), transparent 70%), radial-gradient(60% 50% at 0% 100%, rgba(0,113,188,.35), transparent 70%); }
     .tick-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
-    .tick-card-head .h-card { font-size: 1.9rem; text-transform: uppercase; }
+    .tick-card-head .h-card { font-size: 1.9rem; }
     .tick-card-head svg { width: 44px; color: #fff; opacity: .9; }
     .tick-card .sub { color: rgba(255,255,255,.65); font-size: .9rem; margin-top: 4px; }
     .tick-list { margin-top: var(--s3); display: grid; gap: 10px; }
@@ -287,7 +282,7 @@
       -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
       -webkit-mask-image: linear-gradient(to top, #000 35%, transparent); mask-image: linear-gradient(to top, #000 35%, transparent); }
     .photo figcaption { position: absolute; left: var(--s3); right: var(--s3); bottom: var(--s3); color: rgba(255,255,255,.84); font-size: .9rem; line-height: 1.5; text-shadow: 0 1px 14px rgba(12,33,67,.55); }
-    .photo figcaption b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.6rem; text-transform: uppercase; line-height: 1.05; }
+    .photo figcaption b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.6rem; line-height: 1.05; }
     .photo-badge { position: absolute; z-index: 2; top: var(--s3); right: var(--s3); background: #fff; color: var(--navy); border-radius: 20px; padding: 14px 18px; box-shadow: var(--shadow-3); text-align: center; }
     .photo-badge b { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 2.6rem; line-height: .9; color: var(--blue); }
     .photo-badge span { font-size: .75rem; font-weight: 600; }
@@ -338,10 +333,13 @@
     .panel-intro h3 { font-size: clamp(2.2rem, 4vw, 3rem); }
     .panel-intro p { color: rgba(255,255,255,.75); margin-top: var(--s2); }
     .panel-intro .for { margin-top: var(--s3); display: flex; flex-wrap: wrap; gap: 8px; }
-    .panel-intro .for span { font-size: .8rem; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.1); }
+    /* Audience chips: each one brings its card to the front of the deck */
+    .panel-intro .for button { font: inherit; font-size: .8rem; font-weight: 600; color: inherit; padding: 6px 12px; border: 0; border-radius: 999px; background: rgba(255,255,255,.1); cursor: pointer; transition: transform .4s var(--spring), background-color .25s ease, color .25s ease; }
+    .panel-intro .for button:hover { background: rgba(255,255,255,.24); transform: translateY(-2px); }
+    .panel-intro .for button:active { transform: translateY(0) scale(.96); }
     .panel-intro .btn { margin-top: auto; align-self: flex-start; }
     .panel-intro .spacer { height: var(--s4); flex: none; }
-    .panel-intro .for span.is-on { background: var(--blue); }
+    .panel-intro .for button.is-on { background: var(--blue); cursor: default; transform: none; }
     /* Card deck: every card shares one grid cell; --pos (0 = front) sets how far back each one sits.
        The next two cards peek out above the front card; the rest wait hidden at the back.
        A paper-coloured ring around each card reads as a gap wherever it overlaps the card behind. */
@@ -360,8 +358,11 @@
     .deck-card:nth-child(3n)::before { background:
       radial-gradient(70% 60% at 100% 0%, rgba(0,113,188,.75), transparent 70%),
       radial-gradient(60% 55% at 0% 100%, rgba(12,33,67,.45), transparent 70%); }
-    .deck-card:nth-child(3n+2) .for span, .deck-card:nth-child(3n+1):last-child:not(:first-child) .for span, .deck-card:nth-child(3n) .for span { background: rgba(255,255,255,.14); }
-    .deck-card:nth-child(3n+2) .for span.is-on, .deck-card:nth-child(3n+1):last-child:not(:first-child) .for span.is-on, .deck-card:nth-child(3n) .for span.is-on { background: #fff; color: var(--navy); }
+    .deck-card:nth-child(3n+2) .for button, .deck-card:nth-child(3n+1):last-child:not(:first-child) .for button, .deck-card:nth-child(3n) .for button { background: rgba(255,255,255,.14); }
+    .deck-card:nth-child(3n+2) .for button:hover, .deck-card:nth-child(3n+1):last-child:not(:first-child) .for button:hover, .deck-card:nth-child(3n) .for button:hover { background: rgba(255,255,255,.28); }
+    .deck-card:nth-child(3n+2) .for button.is-on, .deck-card:nth-child(3n+1):last-child:not(:first-child) .for button.is-on, .deck-card:nth-child(3n) .for button.is-on { background: #fff; color: var(--navy); }
+    /* Set from JS while the pointer is over a back card's peeking edge, which brings that card forward */
+    .deck.is-peek { cursor: pointer; }
     /* Software and partners strip at the foot of the services section */
     .stack { margin-top: var(--s6); padding-top: var(--s5); border-top: 1px solid var(--line); }
     .stack-title { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: var(--navy); }
@@ -394,7 +395,7 @@
     .cover-a::before { background: radial-gradient(90% 90% at 100% 0%, #2F74F0, transparent 60%), var(--blue); }
     .cover-b::before { background: radial-gradient(90% 90% at 0% 0%, #1E4B8F, transparent 60%), var(--navy); }
     .cover-c::before { background: radial-gradient(90% 90% at 100% 100%, #2B3F63, transparent 60%), var(--ink); }
-    .post-cover b { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: clamp(4rem, 7vw, 5.5rem); line-height: .8; letter-spacing: -0.03em; text-transform: uppercase; transition: transform .6s var(--spring); }
+    .post-cover b { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: clamp(4rem, 7vw, 5.5rem); line-height: .8; letter-spacing: -0.03em; transition: transform .6s var(--spring); }
     .post:hover .post-cover b { transform: translateY(-4px); }
     .post-cover svg { position: absolute; right: -6%; top: -10%; width: 55%; opacity: .14; color: #fff; }
     .post-body { padding: var(--s3); display: flex; flex-direction: column; flex: 1; }
@@ -599,11 +600,11 @@
     <!-- HOME / HERO -->
     <section class="hero grain" id="home" aria-labelledby="hero-title">
       <div class="hero-bgs" aria-hidden="true">
-        <div class="hero-bg is-active"></div>
-        <div class="hero-bg hero-bg--mtd"></div>
-        <div class="hero-bg hero-bg--cloud"></div>
-        <div class="hero-bg hero-bg--auto"></div>
-        <div class="hero-bg hero-bg--plan"></div>
+        <div class="hero-photo"></div>
+        <div class="hero-photo hero-photo--mtd" data-hs-photo="1"></div>
+        <div class="hero-photo hero-photo--cloud" data-hs-photo="2"></div>
+        <div class="hero-photo hero-photo--auto" data-hs-photo="3"></div>
+        <div class="hero-photo hero-photo--plan" data-hs-photo="4"></div>
       </div>
       <div class="wrap hero-grid">
         <div>
@@ -659,17 +660,12 @@
             </div>
           </div>
           <div class="hero-meter fade-in" style="--d:.6s" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
-          <div class="hero-proof fade-in" style="--d:.65s">
-            <div><b>300+</b><span>clients supported</span></div>
-            <div><b>Since 2020</b><span>based in Luton</span></div>
-            <div><b>1 day</b><span>reply to every enquiry</span></div>
-          </div>
         </div>
 
         <aside class="tick-card fade-in" style="--d:.35s" aria-label="Filings we handle for you" data-parallax="0.05">
           <div class="tick-card-head">
             <div>
-              <p class="h-card">Your year, ticked off</p>
+              <p class="h-card">Your Year, Ticked Off</p>
               <p class="sub">The filings we take care of for you</p>
             </div>
             <svg class="mark mark-anim" viewBox="528 0 644 520" aria-hidden="true"><path class="check" fill="currentColor" d="M541 352c-10-7-11-25-1-34l56-45c10-7 25-5 35 2l137 100L1169 0v157L776 518z"/><path class="bar bar-1" fill="currentColor" d="M929 435l101-94v175H929z"/><path class="bar bar-2" fill="currentColor" d="M1066 308l103-95v303h-103z"/></svg>
@@ -773,35 +769,35 @@
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 5">
               <h3 class="display">Clarity for individuals</h3>
               <p>We handle your tax returns with precision, identify every relief and deduction you're entitled to, and give proactive advice tailored to your goals.</p>
-              <div class="for"><span>Individuals</span><span>Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="for"><button type="button">Individuals</button><button type="button">Sole traders</button><button type="button">Landlords</button><button type="button">Subcontractors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 5">
               <h3 class="display">Claim the relief you're owed</h3>
               <p>Paying into a pension or giving through Gift Aid? Higher-rate taxpayers can claim extra relief on both through their return, and it's one of the most commonly missed savings we find.</p>
-              <div class="for"><span class="is-on">Individuals</span><span>Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="for"><button type="button" class="is-on" aria-current="true">Individuals</button><button type="button">Sole traders</button><button type="button">Landlords</button><button type="button">Subcontractors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 5">
               <h3 class="display">No surprises in January</h3>
               <p>Payments on account can add half of next year's bill to your January payment, and with income over £50,000, Making Tax Digital now means quarterly updates. We plan for both.</p>
-              <div class="for"><span>Individuals</span><span class="is-on">Sole traders</span><span>Landlords</span><span>Subcontractors</span></div>
+              <div class="for"><button type="button">Individuals</button><button type="button" class="is-on" aria-current="true">Sole traders</button><button type="button">Landlords</button><button type="button">Subcontractors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 5">
               <h3 class="display">Make your rentals pay</h3>
               <p>Mortgage interest now earns a 20% tax credit rather than a deduction. We make sure every allowable cost, from repairs to letting fees, is claimed, and check how the property is best owned.</p>
-              <div class="for"><span>Individuals</span><span>Sole traders</span><span class="is-on">Landlords</span><span>Subcontractors</span></div>
+              <div class="for"><button type="button">Individuals</button><button type="button">Sole traders</button><button type="button" class="is-on" aria-current="true">Landlords</button><button type="button">Subcontractors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="5 of 5">
               <h3 class="display">Get back what CIS takes</h3>
               <p>The 20% deducted under CIS is often more than the tax you actually owe. Keep your payment statements and claim your expenses, and you could be due a refund at the end of the tax year.</p>
-              <div class="for"><span>Individuals</span><span>Sole traders</span><span>Landlords</span><span class="is-on">Subcontractors</span></div>
+              <div class="for"><button type="button">Individuals</button><button type="button">Sole traders</button><button type="button">Landlords</button><button type="button" class="is-on" aria-current="true">Subcontractors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Talk to us about your tax</a>
             </div>
@@ -820,35 +816,35 @@
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 5">
               <h3 class="display">Driving your business forward</h3>
               <p>We take the administration off your hands, keep you compliant and find opportunities for growth and savings, while you do what you do best.</p>
-              <div class="for"><span>Limited companies</span><span>Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="for"><button type="button">Limited companies</button><button type="button">Start-ups</button><button type="button">Employers</button><button type="button">Construction</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Get a quote for your business</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 5">
               <h3 class="display">Pay yourself the smart way</h3>
               <p>Corporation Tax runs from 19% to 25% depending on profit. A planned mix of salary, dividends and company pension contributions can keep more of what your company earns in your hands.</p>
-              <div class="for"><span class="is-on">Limited companies</span><span>Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="for"><button type="button" class="is-on" aria-current="true">Limited companies</button><button type="button">Start-ups</button><button type="button">Employers</button><button type="button">Construction</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Get a quote for your business</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 5">
               <h3 class="display">Start on the right foot</h3>
               <p>Sole trader or limited company? The choice shapes your tax from day one. We'll set up your registration and bookkeeping, and plan ahead for VAT before turnover reaches £90,000.</p>
-              <div class="for"><span>Limited companies</span><span class="is-on">Start-ups</span><span>Employers</span><span>Construction</span></div>
+              <div class="for"><button type="button">Limited companies</button><button type="button" class="is-on" aria-current="true">Start-ups</button><button type="button">Employers</button><button type="button">Construction</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Get a quote for your business</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 5">
               <h3 class="display">Payroll without penalties</h3>
               <p>Every payday must be reported to HMRC in real time, and pension auto-enrolment starts with your first employee. Employment Allowance can also cut up to £10,500 off your employer National Insurance.</p>
-              <div class="for"><span>Limited companies</span><span>Start-ups</span><span class="is-on">Employers</span><span>Construction</span></div>
+              <div class="for"><button type="button">Limited companies</button><button type="button">Start-ups</button><button type="button" class="is-on" aria-current="true">Employers</button><button type="button">Construction</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Get a quote for your business</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="5 of 5">
               <h3 class="display">Stay on top of CIS</h3>
               <p>Contractors must verify every subcontractor and file a CIS return by the 19th of each month, with penalties from £100 if it's late. A clean record can also earn gross payment status.</p>
-              <div class="for"><span>Limited companies</span><span>Start-ups</span><span>Employers</span><span class="is-on">Construction</span></div>
+              <div class="for"><button type="button">Limited companies</button><button type="button">Start-ups</button><button type="button">Employers</button><button type="button" class="is-on" aria-current="true">Construction</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Get a quote for your business</a>
             </div>
@@ -869,28 +865,28 @@
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="1 of 4">
               <h3 class="display">Strategic tax planning</h3>
               <p>Proactive strategies to reduce your liabilities, uncover every eligible deduction and protect your financial position in a complex tax environment.</p>
-              <div class="for"><span>Business owners</span><span>Families</span><span>Investors</span></div>
+              <div class="for"><button type="button">Business owners</button><button type="button">Families</button><button type="button">Investors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Book a tax planning call</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="2 of 4">
               <h3 class="display">Plan your exit early</h3>
               <p>Selling your business? Business Asset Disposal Relief can cut Capital Gains Tax to 18% on up to £1 million of gains, but the conditions must be met for two years before the sale.</p>
-              <div class="for"><span class="is-on">Business owners</span><span>Families</span><span>Investors</span></div>
+              <div class="for"><button type="button" class="is-on" aria-current="true">Business owners</button><button type="button">Families</button><button type="button">Investors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Book a tax planning call</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="3 of 4">
               <h3 class="display">Protect what you pass on</h3>
               <p>A married couple can leave up to £1 million, including the family home, free of Inheritance Tax. Gifts made early, starting with £3,000 a year exempt, can reduce the bill further.</p>
-              <div class="for"><span>Business owners</span><span class="is-on">Families</span><span>Investors</span></div>
+              <div class="for"><button type="button">Business owners</button><button type="button" class="is-on" aria-current="true">Families</button><button type="button">Investors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Book a tax planning call</a>
             </div>
             <div class="panel-intro deck-card on-dark" aria-roledescription="slide" aria-label="4 of 4">
               <h3 class="display">Shelter more of your returns</h3>
               <p>With the Capital Gains Tax allowance at £3,000 and the dividend allowance at £500, where you hold investments matters. ISAs, pensions and your spouse's allowances can shelter far more.</p>
-              <div class="for"><span>Business owners</span><span>Families</span><span class="is-on">Investors</span></div>
+              <div class="for"><button type="button">Business owners</button><button type="button">Families</button><button type="button" class="is-on" aria-current="true">Investors</button></div>
               <div class="spacer"></div>
               <a class="btn btn-light" href="#contact">Book a tax planning call</a>
             </div>
@@ -1121,7 +1117,7 @@
     // Starts paused for reduced motion.
     const hsWrap = $('#hero-slides');
     if (hsWrap) {
-      const hsSlides = $$('.hero-slide', hsWrap), hsBgs = $$('.hero-bg'), hsBars = $$('.hero-meter i');
+      const hsSlides = $$('.hero-slide', hsWrap), hsPhotos = $$('[data-hs-photo]'), hsBars = $$('.hero-meter i');
       const hsMeter = $('.hero-meter'), hsToggle = $('[data-hs="toggle"]'), DUR = 8000;
       let cur = 0, playing = !reduce, inView = true, remaining = DUR, t0 = 0, timer = null;
       const run = () => {
@@ -1140,7 +1136,7 @@
         cur = (i + hsSlides.length) % hsSlides.length;
         hsWrap.style.setProperty('--hs-base', '.25s');
         hsSlides.forEach((s, k) => { const on = k === cur; s.classList.toggle('is-active', on); s.inert = !on; s.setAttribute('aria-hidden', !on); });
-        hsBgs.forEach((b, k) => b.classList.toggle('is-active', k === cur));
+        hsPhotos.forEach(p => p.classList.toggle('is-active', +p.dataset.hsPhoto === cur));
         hsBars.forEach((b, k) => { b.classList.remove('is-active'); b.classList.toggle('is-done', k < cur); });
         void hsMeter.offsetWidth; // restart the meter animation
         hsBars[cur].classList.add('is-active');
@@ -1172,14 +1168,13 @@
     $('#sa-date').textContent = `31 January ${deadline.getFullYear()}`;
     $('#year').textContent = now.getFullYear();
 
-    // Header: always visible, turns solid after scroll
-    const header = $('.site-header'), bar = $('.progress'), toTop = $('.to-top');
+    // Header: solid and visible from load (no scroll state)
+    const bar = $('.progress'), toTop = $('.to-top');
     const parallax = $$('[data-parallax]');
     const timeline = $('[data-timeline]'), tFill = timeline && $('.fill', timeline);
     let ticking = false;
     const onScroll = () => {
       const y = scrollY, h = document.documentElement.scrollHeight - innerHeight;
-      header.classList.toggle('is-scrolled', y > 12);
       bar.style.transform = `scaleX(${h > 0 ? y / h : 0})`;
       toTop.classList.toggle('show', y > innerHeight);
       if (!reduce) {
@@ -1371,13 +1366,25 @@
         t.tabIndex = on ? 0 : -1;
         const panel = document.getElementById(t.getAttribute('aria-controls'));
         panel.hidden = !on;
-        if (on) $$('.svc, .panel-intro:not(.deck-card), .deck', panel).forEach((el, i) => {
+        if (!on) return;
+        $$('.svc, .panel-intro:not(.deck-card), .deck', panel).forEach((el, i) => {
           if (reduce) return;
           el.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }],
             { duration: 600, delay: i * 50, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
         });
+        // Each tab opens on its deck's first card, with a full 7s before the next
+        $('[data-deck]', panel)?.reset?.();
       });
       movePill(tab);
+    };
+    // Called by the open tab's deck once its last card has had its turn: hand over to the next tab,
+    // unless someone is pointing at or keyboard-focused in the tabs or the open panel.
+    const tablist = $('.tabs');
+    const nextTab = () => {
+      const cur = $('.tab[aria-selected="true"]'), panel = document.getElementById(cur.getAttribute('aria-controls'));
+      if ([tablist, panel].some(el => el.matches(':hover') || el.querySelector(':focus-visible'))) return false;
+      select(tabs[(tabs.indexOf(cur) + 1) % tabs.length]);
+      return true;
     };
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => select(t));
@@ -1389,14 +1396,27 @@
       });
     });
     const syncPill = () => movePill($('.tab[aria-selected="true"]'));
+
+    // Hero tint starts 85% of the way down the tick card. Uses offsetTop (layout position), so the card's
+    // parallax and fade-in transforms don't shift it.
+    const heroPhoto = $('.hero-photo'), tickCard = $('.tick-card');
+    const syncHeroFade = () => {
+      let top = 0;
+      for (let el = tickCard; el && el !== heroPhoto.offsetParent; el = el.offsetParent) top += el.offsetTop;
+      heroPhoto.parentElement.style.setProperty('--fade-start', `${top + tickCard.offsetHeight * .85 - heroPhoto.offsetTop}px`);
+    };
+    addEventListener('resize', syncHeroFade);
+    document.fonts ? document.fonts.ready.then(syncHeroFade) : syncHeroFade();
     addEventListener('resize', syncPill);
     document.fonts ? document.fonts.ready.then(syncPill) : syncPill();
 
-    // Insight decks (one per services tab): the front card tucks to the back every 7s.
+    // Insight decks (one per services tab): the front card tucks to the back every 7s, and after the
+    // last card the next tab takes over (Personal → Business → Tax → Personal).
     // Pauses on hover/focus, while its tab is hidden or off screen, and never moves for reduced motion.
+    // Clicking an audience chip, or the peeking edge of a back card, brings that card to the front.
     $$('[data-deck]').forEach(deck => {
       const cards = $$('.deck-card', deck);
-      let front = 0, held = false, onScreen = false;
+      let front = 0, held = false, onScreen = false, timer;
       const place = () => cards.forEach((card, i) => {
         const pos = (i - front + cards.length) % cards.length;
         card.style.setProperty('--pos', pos);
@@ -1404,7 +1424,47 @@
         card.inert = pos !== 0;
         card.setAttribute('aria-hidden', pos !== 0);
       });
+      const tick = () => {
+        if (held || !onScreen || document.hidden || deck.closest('[hidden]')) return;
+        if (front === cards.length - 1 && nextTab()) return;
+        front = (front + 1) % cards.length;
+        place();
+      };
+      const restart = () => { if (reduce) return; clearInterval(timer); timer = setInterval(tick, 7000); };
+      deck.reset = () => { front = 0; place(); restart(); };
+      const show = i => {
+        if (i < 0 || i === front) return;
+        front = i;
+        place();
+        restart();
+      };
       place();
+
+      // Chip -> the card whose highlighted chip has the same label
+      const cardFor = label => cards.findIndex(c => $('.for .is-on', c)?.textContent === label);
+      deck.addEventListener('click', e => {
+        const chip = e.target.closest('.for button');
+        if (!chip) return;
+        const i = cardFor(chip.textContent);
+        if (i < 0 || i === front) return;
+        const hadFocus = chip === document.activeElement;
+        show(i);
+        // The clicked chip's card is now inert, so carry focus to the same chip on the new front card
+        if (hadFocus) $('.for .is-on', cards[i]).focus({ preventScroll: true });
+      });
+
+      // Back cards are inert, so their peeking edges are found from where the pointer sits above the front card
+      const peekAt = e => {
+        const top = cards[front].getBoundingClientRect().top;
+        const step = Math.ceil((top - e.clientY) / 18);
+        if (step !== 1 && step !== 2) return -1;
+        const i = (front + step) % cards.length, r = cards[i].getBoundingClientRect();
+        return e.clientX >= r.left && e.clientX <= r.right ? i : -1;
+      };
+      deck.addEventListener('pointermove', e => deck.classList.toggle('is-peek', peekAt(e) >= 0));
+      deck.addEventListener('pointerleave', () => deck.classList.remove('is-peek'));
+      deck.addEventListener('click', e => { if (!e.target.closest('.deck-card')) show(peekAt(e)); });
+
       if (reduce) return;
       new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(deck);
       const hold = on => () => { held = on; };
@@ -1412,11 +1472,7 @@
       deck.addEventListener('pointerleave', hold(false));
       deck.addEventListener('focusin', hold(true));
       deck.addEventListener('focusout', hold(false));
-      setInterval(() => {
-        if (held || !onScreen || document.hidden || deck.closest('[hidden]')) return;
-        front = (front + 1) % cards.length;
-        place();
-      }, 7000);
+      restart();
     });
 
     // Testimonial carousel
