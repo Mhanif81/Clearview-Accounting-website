@@ -140,7 +140,11 @@
     .menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .mobile-menu { position: fixed; inset: 84px 0 0 0; z-index: 55; background: var(--paper); padding: var(--s4) var(--gutter); display: flex; flex-direction: column; gap: 4px; transform: translateY(-12px); opacity: 0; pointer-events: none; transition: transform .5s var(--ease-out), opacity .3s ease; }
     .mobile-menu.is-open { transform: none; opacity: 1; pointer-events: auto; }
-    .mobile-menu a.m-link { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.4rem; text-transform: uppercase; letter-spacing: -0.02em; color: var(--navy); padding: 6px 0; border-bottom: 1px solid var(--line); transition: transform .4s var(--spring), opacity .2s; }
+    /* Scrolls on its own on short screens (the page behind is locked while it's open); items keep their
+       size instead of squashing to fit */
+    .mobile-menu { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--s4) + env(safe-area-inset-bottom)); }
+    .mobile-menu > * { flex-shrink: 0; }
+    .mobile-menu a.m-link { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(2.4rem - 1pt); text-transform: uppercase; letter-spacing: -0.02em; color: var(--navy); padding: 6px 0; border-bottom: 1px solid var(--line); transition: transform .4s var(--spring), opacity .2s; }
     .mobile-menu a.m-link:hover { transform: translateX(6px); }
     .mobile-menu a.m-link:active { opacity: .6; }
     @media (min-width: 1080px) {
@@ -192,7 +196,10 @@
     /* Per-slide photos: same box and treatment as the skyline, cross-fading in over it while their slide
        (data-hs-photo = slide index) is showing */
     .hero-photo[data-hs-photo] { opacity: 0; transition: opacity 1.2s ease; }
-    .hero-photo[data-hs-photo].is-active { opacity: 1; }
+    .hero-photo[data-hs-photo].is-active { opacity: 1; z-index: 2; }
+    /* The outgoing photo stays opaque underneath while the next one fades in over it, so the skyline
+       never shows through mid-change (it only reappears when going back to slide 1) */
+    .hero-photo[data-hs-photo].is-prev { opacity: 1; z-index: 1; transition: none; }
     .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
     .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
     .hero-photo--auto { background-image: url("Website%20Assets/hero-advice.jpg"); background-position: 50% 50%; }
@@ -1119,7 +1126,13 @@
     if (hsWrap) {
       const hsSlides = $$('.hero-slide', hsWrap), hsPhotos = $$('[data-hs-photo]'), hsBars = $$('.hero-meter i');
       const hsMeter = $('.hero-meter'), hsToggle = $('[data-hs="toggle"]'), DUR = 8000;
-      let cur = 0, playing = !reduce, inView = true, remaining = DUR, t0 = 0, timer = null;
+      // Start downloading every slide photo up front; each promise settles once its image is decoded
+      const photoReady = new Map(hsPhotos.map(p => {
+        const img = new Image();
+        img.src = getComputedStyle(p).backgroundImage.replace(/^url\(["']?|["']?\)$/g, '');
+        return [p, (img.decode ? img.decode() : new Promise(r => { img.onload = img.onerror = r; })).catch(() => {})];
+      }));
+      let photoTimer = 0, cur = 0, playing = !reduce, inView = true, remaining = DUR, t0 = 0, timer = null;
       const run = () => {
         const on = playing && inView && !document.hidden;
         hsMeter.classList.toggle('is-paused', !on);
@@ -1136,7 +1149,22 @@
         cur = (i + hsSlides.length) % hsSlides.length;
         hsWrap.style.setProperty('--hs-base', '.25s');
         hsSlides.forEach((s, k) => { const on = k === cur; s.classList.toggle('is-active', on); s.inert = !on; s.setAttribute('aria-hidden', !on); });
-        hsPhotos.forEach(p => p.classList.toggle('is-active', +p.dataset.hsPhoto === cur));
+        // The outgoing photo is held (is-prev) until the incoming one has downloaded and faded in over it,
+        // so a slow connection (typically mobile) never exposes the skyline between two photos
+        const next = hsPhotos.find(p => +p.dataset.hsPhoto === cur), slide = cur;
+        clearTimeout(photoTimer);
+        hsPhotos.forEach(p => {
+          if (p === next) return;
+          const shown = p.classList.contains('is-active') || p.classList.contains('is-prev');
+          p.classList.toggle('is-prev', !!next && shown);
+          p.classList.remove('is-active');
+        });
+        if (next) photoReady.get(next).then(() => {
+          if (slide !== cur) return;
+          next.classList.remove('is-prev');
+          next.classList.add('is-active');
+          photoTimer = setTimeout(() => hsPhotos.forEach(p => p.classList.remove('is-prev')), 1300);
+        });
         hsBars.forEach((b, k) => { b.classList.remove('is-active'); b.classList.toggle('is-done', k < cur); });
         void hsMeter.offsetWidth; // restart the meter animation
         hsBars[cur].classList.add('is-active');
