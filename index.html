@@ -216,6 +216,12 @@
     .hero-ctrl .i-play, .hero-ctrl.is-paused .i-pause { display: none; }
     .hero-ctrl.is-paused .i-play { display: block; }
     .hero-meter { display: flex; gap: 6px; margin-top: 20px; }
+    /* Mobile: CTA, then the slideshow controls on their own row, then the meter, all centred */
+    @media (max-width: 767px) {
+      .hero-actions { justify-content: center; max-width: none; }
+      .hero-ctrls { flex-basis: 100%; justify-content: center; margin-left: 0; }
+      .hero-meter { justify-content: center; }
+    }
     .hero-meter i { width: 36px; height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
     .hero-meter b { display: block; height: 100%; background: var(--blue); transform-origin: left; transform: scaleX(0); }
     .hero-meter i.is-done b { transform: scaleX(1); }
