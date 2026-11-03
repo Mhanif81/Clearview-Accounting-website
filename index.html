@@ -216,8 +216,17 @@
     .hero-ctrl .i-play, .hero-ctrl.is-paused .i-pause { display: none; }
     .hero-ctrl.is-paused .i-play { display: block; }
     .hero-meter { display: flex; gap: 6px; margin-top: 20px; }
-    /* Mobile: CTA, then the slideshow controls on their own row, then the meter, all centred */
+    /* Mobile: slide headings and descriptions centred, then the CTA, the slideshow controls on their
+       own row and the meter, all centred */
     @media (max-width: 767px) {
+      /* The stacked hero is ~1400px tall, so a full-height cover photo was blown up ~6x. Instead the photos
+         fill a 580px band behind the copy (about 2.5x less zoom) and fade into black, which carries on
+         behind the tick card */
+      .hero-bgs { background: linear-gradient(transparent 84px, #000 84px); }
+      .hero-photo { bottom: auto; height: 580px; }
+      .hero-photo::after { background: linear-gradient(180deg, rgba(0,0,0,0) 55%, #000 100%), rgba(8,18,38,.25); }
+      .hero-slide { text-align: center; }
+      .hero-slide .lede { margin-inline: auto; }
       .hero-actions { justify-content: center; max-width: none; }
       .hero-ctrls { flex-basis: 100%; justify-content: center; margin-left: 0; }
       .hero-meter { justify-content: center; }
