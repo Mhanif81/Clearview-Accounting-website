@@ -31,6 +31,7 @@
   </script>
   <style>
     :root {
+      --header-h: calc(84px - 3mm); /* fixed header bar height; everything that clears the bar uses it */
       /* Brand palette — sampled from CL Brand Guideline.jpg and the logo */
       --blue: #115ADB;
       --blue-deep: #0C47B4;
@@ -58,7 +59,7 @@
       --ease-out: cubic-bezier(.16, 1, .3, 1);
     }
 
-    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 4px); }
     body.cv { background: var(--paper); color: var(--navy); font-family: Montserrat, Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     .cv ::selection { background: var(--blue); color: #fff; }
     .wrap { width: 100%; max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); }
@@ -113,32 +114,30 @@
 
     /* Header */
     .site-header { position: fixed; inset: 0 0 auto 0; z-index: 60; }
-    .site-header::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.86); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); box-shadow: 0 1px 0 var(--line), 0 12px 32px -20px rgba(12,33,67,.25); }
-    .header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: 84px; }
-    .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--logo); border-radius: 8px; transition: transform .45s var(--spring); }
+    .site-header::before { content: ""; position: absolute; inset: 0; background: #26282C; box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 12px 32px -20px rgba(8,18,38,.6); }
+    .header-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--s3); height: var(--header-h); }
+    .brand { display: inline-flex; align-items: center; border-radius: 8px; transition: transform .45s var(--spring); }
     .brand:hover { transform: translateY(-1px); }
     .brand:active { transform: scale(.98); }
-    .brand svg { width: 46px; height: auto; }
-    .brand-word { display: flex; flex-direction: column; line-height: 1; font-family: Montserrat, sans-serif; }
-    .brand-word b { font-weight: 700; font-size: 1.4rem; letter-spacing: -0.01em; }
-    .brand-word span { font-weight: 500; font-size: .62rem; letter-spacing: .32em; margin-top: 4px; }
+    .brand img { display: block; height: 54px; width: auto; }
     .nav { display: none; }
-    .nav a { position: relative; padding: 10px 12px; white-space: nowrap; font-size: calc(.9rem + .5pt); font-weight: 700; color: var(--navy); border-radius: 8px; transition: opacity .2s ease; }
+    .nav a { position: relative; padding: 10px 12px; white-space: nowrap; font-size: calc(.9rem + .5pt); font-weight: 700; color: #fff; border-radius: 8px; transition: opacity .2s ease; }
     .nav a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; border-radius: 2px; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--spring); }
     .nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); }
     .nav a:active { opacity: .6; }
-    .nav a.is-active { color: var(--blue); }
     .header-cta { display: none; }
-    .header-tel { display: none; white-space: nowrap; font-weight: 600; font-size: .9rem; color: var(--navy); align-items: center; gap: 8px; }
-    .menu-btn { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--white); box-shadow: var(--shadow-1); transition: transform .4s var(--spring); }
+    .header-tel { display: none; white-space: nowrap; font-weight: 600; font-size: .9rem; color: #fff; align-items: center; gap: 8px; border-radius: 8px; transition: opacity .2s ease; }
+    .header-tel:hover { opacity: .8; }
+    .header-tel:active { opacity: .6; }
+    .menu-btn { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: transform .4s var(--spring); }
     .menu-btn:hover { transform: translateY(-1px); }
     .menu-btn:active { transform: scale(.94); }
-    .menu-btn span { display: block; width: 20px; height: 2px; background: var(--navy); border-radius: 2px; transition: transform .4s var(--spring), opacity .2s; }
+    .menu-btn span { display: block; width: 20px; height: 2px; background: #fff; border-radius: 2px; transition: transform .4s var(--spring), opacity .2s; }
     .menu-btn span + span { margin-top: 5px; }
     .menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
     .menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { position: fixed; inset: 84px 0 0 0; z-index: 55; background: var(--paper); padding: var(--s4) var(--gutter); display: flex; flex-direction: column; gap: 4px; transform: translateY(-12px); opacity: 0; pointer-events: none; transition: transform .5s var(--ease-out), opacity .3s ease; }
+    .mobile-menu { position: fixed; inset: var(--header-h) 0 0 0; z-index: 55; background: var(--paper); padding: var(--s4) var(--gutter); display: flex; flex-direction: column; gap: 4px; transform: translateY(-12px); opacity: 0; pointer-events: none; transition: transform .5s var(--ease-out), opacity .3s ease; }
     .mobile-menu.is-open { transform: none; opacity: 1; pointer-events: auto; }
     /* Scrolls on its own on short screens (the page behind is locked while it's open); items keep their
        size instead of squashing to fit */
@@ -155,7 +154,7 @@
     @media (min-width: 1280px) { .header-tel { display: inline-flex; } }
 
     /* Hero */
-    .hero { position: relative; padding-top: 148px; padding-bottom: clamp(72px, 9vw, 120px); overflow: hidden; isolation: isolate;
+    .hero { position: relative; padding-top: calc(var(--header-h) + 64px); padding-bottom: clamp(72px, 9vw, 120px); overflow: hidden; isolation: isolate;
       background:
         radial-gradient(60% 55% at 85% 20%, rgba(17,90,219,.16), transparent 70%),
         radial-gradient(40% 40% at 10% 90%, rgba(0,113,188,.10), transparent 70%),
@@ -187,8 +186,8 @@
     .hero-bgs { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
     /* City skyline under every slide: a brand-blue multiply tint, then a black tint that fades in from
        85% of the way down the tick card (--fade-start, set from JS) to solid at the marquee strip */
-    /* Starts below the 84px header bar */
-    .hero-photo { position: absolute; inset: 84px 0 0; background: url("Website%20Assets/london_skyline_4k_16x9.jpg") 70% 100% / cover no-repeat; filter: saturate(.75); }
+    /* Starts below the header bar */
+    .hero-photo { position: absolute; inset: var(--header-h) 0 0; background: url("Website%20Assets/london_skyline_4k_16x9.jpg") 70% 100% / cover no-repeat; filter: saturate(.75); }
     .hero-photo::before, .hero-photo::after { content: ""; position: absolute; inset: 0; }
     .hero-photo::before { background: rgba(17,90,219,.16); mix-blend-mode: multiply; }
     /* Black fade at the bottom, over an even navy shade across the whole photo that lifts the white hero text */
@@ -222,7 +221,7 @@
       /* The stacked hero is ~1400px tall, so a full-height cover photo was blown up ~6x. Instead the photos
          fill a 580px band behind the copy (about 2.5x less zoom) and fade into black, which carries on
          behind the tick card */
-      .hero-bgs { background: linear-gradient(transparent 84px, #000 84px); }
+      .hero-bgs { background: linear-gradient(transparent var(--header-h), #000 var(--header-h)); }
       .hero-photo { bottom: auto; height: 580px; }
       .hero-photo::after { background: linear-gradient(180deg, rgba(0,0,0,0) 55%, #000 100%), rgba(8,18,38,.25); }
       .hero-slide { text-align: center; }
@@ -586,11 +585,10 @@
   </svg>
 
   <!-- Header -->
-  <header class="site-header" id="top">
+  <header class="site-header on-dark" id="top">
     <div class="wrap header-inner">
       <a href="#home" class="brand" aria-label="ClearView Accounting home">
-        <svg aria-hidden="true"><use href="#mark"/></svg>
-        <span class="brand-word"><b>ClearView</b><span>ACCOUNTING</span></span>
+        <img src="Website%20Assets/ClearView-Logo-White-nav.png" alt="" width="86" height="54">
       </a>
       <nav class="nav" aria-label="Main">
         <a href="#home">Home</a>
