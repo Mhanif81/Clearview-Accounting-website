@@ -201,7 +201,9 @@
     .hero-photo[data-hs-photo].is-prev { opacity: 1; z-index: 1; transition: none; }
     .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
     .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
-    .hero-photo--auto { background-image: url("Website%20Assets/hero-advice.jpg"); background-position: 50% 50%; }
+    /* Slide 4 is a video rather than a photo: same layer, tint and fade (the video sits under both) */
+    .hero-photo--auto { background-image: url("Website%20Assets/hero-ct600-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
     .hero-photo--plan { background-image: url("Website%20Assets/hero-plan.jpg"); background-position: 50% 50%; }
     /* Same font size and max width as the .lede above, so 58ch matches and the controls (pushed right)
        end flush with the description's right edge */
@@ -257,6 +259,20 @@
     .tick svg { position: absolute; inset: 7px; width: 16px; height: 16px; color: #fff; opacity: 0; transform: scale(.4) rotate(-20deg); transition: opacity .3s ease .15s, transform .5s var(--spring) .15s; }
     .tick-item.is-done .tick::before { transform: scale(1); }
     .tick-item.is-done .tick svg { opacity: 1; transform: none; }
+    /* Filing selector: from slide 2 on, the list turns into a looping wheel (the JS clones the items above
+       and below) that spins to put the current slide's filing under the fixed selector in the middle,
+       then the card heading becomes that filing's name */
+    .tick-wheel { position: relative; margin-top: var(--s2); }
+    /* Hairline under the heading: the edge the wheel scrolls up behind */
+    .tick-card-head { padding-bottom: var(--s2); border-bottom: 1px solid rgba(255,255,255,.16); }
+    .tick-wheel .tick-list { margin-top: 0; }
+    .tick-window { overflow: hidden; }
+    .tick-wheel.is-spun .tick-window { -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
+    .tick-wheel.is-ready .tick-list { position: relative; transition: transform .95s var(--spring); }
+    .tick-sel { position: absolute; left: -4px; right: -4px; top: 50%; height: var(--sel-h, 60px); border-radius: 18px; pointer-events: none; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 2px var(--blue), 0 0 0 4px rgba(17,90,219,.18), 0 14px 32px -12px rgba(17,90,219,.75); opacity: 0; transform: translateY(-50%) scale(.96); transition: opacity .4s ease, transform .6s var(--spring); }
+    .tick-wheel.is-sel .tick-sel { opacity: 1; transform: translateY(-50%); }
+    .tc-title { display: inline-block; transition: opacity .25s ease, transform .45s var(--ease-out); }
+    .tc-title.is-out { opacity: 0; transform: translateY(-10px); }
     .deadline { margin-top: var(--s3); padding: var(--s3); border-radius: 20px; background: #fff; color: var(--navy); display: flex; align-items: center; justify-content: space-between; gap: var(--s2); box-shadow: 0 18px 40px -20px rgba(0,0,0,.6); }
     .deadline p { font-size: .9rem; line-height: 1.45; }
     .deadline p b { display: block; font-size: 1rem; }
@@ -370,7 +386,9 @@
       transform: translateY(calc(var(--pos) * -18px)) scale(calc(1 - var(--pos) * .05));
       transition: transform .8s var(--spring), opacity .6s ease; }
     .deck-card::after { content: ""; position: absolute; inset: 0; background: #fff; opacity: calc(var(--pos) * .07); pointer-events: none; transition: opacity .6s ease; }
-    .deck-card[data-pos="3"], .deck-card[data-pos="4"] { opacity: 0; }
+    /* Hidden cards wait tucked behind the third card rather than climbing further, so the card leaving
+       the front fades out before it can rise over the tabs above the deck */
+    .deck-card[data-pos="3"], .deck-card[data-pos="4"] { opacity: 0; transform: translateY(-36px) scale(.9); transition: transform .8s var(--spring), opacity .3s ease; }
     /* Three-tone deck, cycling navy → deep navy-blue → brand blue. A deck whose length would wrap
        navy onto navy (4 cards) gives its last card the middle tone instead. */
     .deck-card:nth-child(3n+2), .deck-card:nth-child(3n+1):last-child:not(:first-child) { background: color-mix(in srgb, var(--navy) 58%, var(--blue-deep)); }
@@ -623,7 +641,7 @@
         <div class="hero-photo"></div>
         <div class="hero-photo hero-photo--mtd" data-hs-photo="1"></div>
         <div class="hero-photo hero-photo--cloud" data-hs-photo="2"></div>
-        <div class="hero-photo hero-photo--auto" data-hs-photo="3"></div>
+        <div class="hero-photo hero-photo--auto" data-hs-photo="3"><video src="Website%20Assets/329674_medium.mp4" poster="Website%20Assets/hero-ct600-poster.jpg" muted playsinline preload="none" aria-hidden="true"></video></div>
         <div class="hero-photo hero-photo--plan" data-hs-photo="4"></div>
       </div>
       <div class="wrap hero-grid">
@@ -685,17 +703,22 @@
         <aside class="tick-card fade-in" style="--d:.35s" aria-label="Filings we handle for you" data-parallax="0.05">
           <div class="tick-card-head">
             <div>
-              <p class="h-card">Your Year, Ticked Off</p>
+              <p class="h-card"><span class="tc-title">Your Year, Ticked Off</span></p>
               <p class="sub">The filings we take care of for you</p>
             </div>
             <svg class="mark mark-anim" viewBox="528 0 644 520" aria-hidden="true"><path class="check" fill="currentColor" d="M541 352c-10-7-11-25-1-34l56-45c10-7 25-5 35 2l137 100L1169 0v157L776 518z"/><path class="bar bar-1" fill="currentColor" d="M929 435l101-94v175H929z"/><path class="bar bar-2" fill="currentColor" d="M1066 308l103-95v303h-103z"/></svg>
           </div>
+          <div class="tick-wheel">
+          <div class="tick-window">
           <ul class="tick-list">
             <li class="tick-item"><span class="tick"><svg><use href="#i-check"/></svg></span><p>VAT return<small>Submitted to HMRC, on time</small></p></li>
             <li class="tick-item"><span class="tick"><svg><use href="#i-check"/></svg></span><p>Payroll run<small>Wages paid and payslips issued</small></p></li>
             <li class="tick-item"><span class="tick"><svg><use href="#i-check"/></svg></span><p>CT600 corporation tax<small>Filed with every allowance claimed</small></p></li>
             <li class="tick-item"><span class="tick"><svg><use href="#i-check"/></svg></span><p>Confirmation statement<small>Companies House, up to date</small></p></li>
           </ul>
+          </div>
+          <span class="tick-sel" aria-hidden="true"></span>
+          </div>
           <div class="deadline">
             <p><b>Self Assessment deadline</b><span id="sa-date">31 January</span> for online returns</p>
             <div class="days"><b id="sa-days">–</b><span>days to go</span></div>
@@ -1132,6 +1155,64 @@
     requestAnimationFrame(() => document.body.classList.add('is-loaded'));
     $$('.tick-item').forEach((li, i) => setTimeout(() => li.classList.add('is-done'), reduce ? 0 : 1100 + i * 380));
 
+    // Filing selector on the hero card. The page opens on the plain list of four filings under "Your Year,
+    // Ticked Off". From then on the list is a looping wheel of five: a ClearView item (added here, sitting
+    // just out of view above VAT return) and the four filings. Each slide spins the wheel (the shortest
+    // way, up or down) to put its item under the selector: slide 1 ClearView, slides 2-5 filings 1-4, and
+    // the heading then changes to that item's name. The wheel is three copies of the five items, so it can
+    // loop; after each spin it snaps back to the middle copy without a transition.
+    const wheel = $('.tick-wheel');
+    if (wheel) {
+      const win = $('.tick-window', wheel), track = $('.tick-list', wheel), title = $('.tc-title');
+      const real = $$('.tick-item', track), brand = real[0].cloneNode(true);
+      $('p', brand).firstChild.textContent = 'ClearView';
+      $('small', brand).textContent = 'Accounting, based in Luton';
+      brand.classList.add('is-done');
+      brand.setAttribute('aria-hidden', 'true');
+      track.prepend(brand);
+      const base = [brand, ...real], N = base.length;
+      const copy = () => base.map(li => { const c = li.cloneNode(true); c.classList.add('is-done'); c.setAttribute('aria-hidden', 'true'); return c; });
+      track.prepend(...copy()); track.append(...copy());
+      const items = $$('.tick-item', track), names = base.map(li => $('p', li).firstChild.textContent.trim());
+      let pos = N / 2, spinTimer = 0, titleTimer = 0; // starts centred on the four filings (items 1-4)
+      // Track offset of the centre of fractional position a (in items, counted from the middle copy)
+      const centre = a => {
+        const k = a + N, i = Math.min(Math.floor(k), items.length - 2), f = k - i;
+        const c = n => items[n].offsetTop + items[n].offsetHeight / 2;
+        return c(i) + f * (c(i + 1) - c(i));
+      };
+      const place = () => { track.style.transform = `translateY(${win.offsetHeight / 2 - centre(pos)}px)`; };
+      const snap = () => { track.style.transition = 'none'; place(); void track.offsetWidth; track.style.transition = ''; };
+      const measure = () => {
+        const last = real[real.length - 1];
+        win.style.height = `${last.offsetTop + last.offsetHeight - real[0].offsetTop}px`;
+        wheel.style.setProperty('--sel-h', `${real[0].offsetHeight + 8}px`);
+        snap();
+      };
+      const setTitle = t => {
+        if (title.textContent === t) return;
+        clearTimeout(titleTimer);
+        title.classList.add('is-out');
+        titleTimer = setTimeout(() => { title.textContent = t; title.classList.remove('is-out'); }, reduce ? 0 : 230);
+      };
+      measure();
+      new ResizeObserver(measure).observe(track);
+      requestAnimationFrame(() => wheel.classList.add('is-ready'));
+      document.addEventListener('heroslide', ({ detail: slide }) => {
+        let d = ((slide - pos) % N + N) % N;
+        if (d > N / 2) d -= N;
+        pos += d;
+        clearTimeout(spinTimer);
+        wheel.classList.add('is-spun', 'is-sel');
+        place();
+        spinTimer = setTimeout(() => {
+          pos = ((pos % N) + N) % N;
+          snap();
+          setTitle(names[slide]);
+        }, reduce ? 0 : 950);
+      });
+    }
+
     // Hero slideshow: advances every 8s while playing. The pause button stops it, and it also waits
     // (resuming where it left off) while the hero is off screen or the browser tab is hidden.
     // Starts paused for reduced motion.
@@ -1145,6 +1226,19 @@
         img.src = getComputedStyle(p).backgroundImage.replace(/^url\(["']?|["']?\)$/g, '');
         return [p, (img.decode ? img.decode() : new Promise(r => { img.onload = img.onerror = r; })).catch(() => {})];
       }));
+      // A slide's background video (slide 4) plays its first CLIP seconds each time the slide comes in, then
+      // holds that frame. Until it can play, its poster (the first frame) shows; reduced motion keeps the
+      // poster. The download starts once the page has loaded, so it doesn't compete with the first paint.
+      const hsVideos = hsPhotos.map(p => $('video', p)).filter(Boolean), CLIP = 4;
+      hsVideos.forEach(v => {
+        // Checked every frame, plus on timeupdate for when frames are throttled (e.g. a background tab);
+        // an overshoot is wound back so the held frame is always the one at CLIP
+        const stop = () => { v.pause(); if (v.currentTime > CLIP + .1) v.currentTime = CLIP; };
+        const hold = () => { if (v.currentTime >= CLIP) stop(); else if (!v.paused) requestAnimationFrame(hold); };
+        v.addEventListener('playing', hold);
+        v.addEventListener('timeupdate', () => { if (!v.paused && v.currentTime >= CLIP) stop(); });
+        if (!reduce) addEventListener('load', () => { v.preload = 'auto'; v.load(); }, { once: true });
+      });
       let photoTimer = 0, cur = 0, playing = !reduce, inView = true, remaining = DUR, t0 = 0, timer = null;
       const run = () => {
         const on = playing && inView && !document.hidden;
@@ -1171,13 +1265,17 @@
           const shown = p.classList.contains('is-active') || p.classList.contains('is-prev');
           p.classList.toggle('is-prev', !!next && shown);
           p.classList.remove('is-active');
+          $('video', p)?.pause();
         });
         if (next) photoReady.get(next).then(() => {
           if (slide !== cur) return;
           next.classList.remove('is-prev');
           next.classList.add('is-active');
+          const v = $('video', next);
+          if (v && !reduce) { v.currentTime = 0; v.play().catch(() => {}); }
           photoTimer = setTimeout(() => hsPhotos.forEach(p => p.classList.remove('is-prev')), 1300);
         });
+        document.dispatchEvent(new CustomEvent('heroslide', { detail: cur }));
         hsBars.forEach((b, k) => { b.classList.remove('is-active'); b.classList.toggle('is-done', k < cur); });
         void hsMeter.offsetWidth; // restart the meter animation
         hsBars[cur].classList.add('is-active');
