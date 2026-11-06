@@ -197,14 +197,18 @@
     .hero-photo[data-hs-photo] { opacity: 0; transition: opacity 1.2s ease; }
     .hero-photo[data-hs-photo].is-active { opacity: 1; z-index: 2; }
     /* The outgoing photo stays opaque underneath while the next one fades in over it, so the skyline
-       never shows through mid-change (it only reappears when going back to slide 1) */
+       never shows through mid-change */
     .hero-photo[data-hs-photo].is-prev { opacity: 1; z-index: 1; transition: none; }
-    .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
-    .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
-    /* Slide 4 is a video rather than a photo: same layer, tint and fade (the video sits under both) */
-    .hero-photo--auto { background-image: url("Website%20Assets/hero-ct600-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--mtd { background-image: url("Website%20Assets/hero-mountain-climb-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--cloud { background-image: url("Website%20Assets/hero-ships-poster.jpg"); background-position: 50% 50%; }
+    /* Every slide is a video rather than a photo: same layer, tint and fade (the video sits under both) */
+    .hero-photo--intro { background-image: url("Website%20Assets/hero-city-blocks-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--auto { background-image: url("Website%20Assets/hero-tractor-poster.jpg"); background-position: 50% 50%; }
     .hero-photo video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
-    .hero-photo--plan { background-image: url("Website%20Assets/hero-plan.jpg"); background-position: 50% 50%; }
+    .hero-photo--plan { background-image: url("Website%20Assets/hero-walk-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--landscape { background-image: url("Website%20Assets/hero-landscape-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--cargo { background-image: url("Website%20Assets/hero-cargo-poster.jpg"); background-position: 50% 50%; }
+    .hero-photo--lights { background-image: url("Website%20Assets/hero-city-lights-poster.jpg"); background-position: 50% 50%; }
     /* Same font size and max width as the .lede above, so 58ch matches and the controls (pushed right)
        end flush with the description's right edge */
     .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: var(--s4); max-width: 58ch; font-size: clamp(1.05rem, 1.4vw, 1.2rem); }
@@ -225,6 +229,16 @@
          behind the tick card */
       .hero-bgs { background: linear-gradient(transparent var(--header-h), #000 var(--header-h)); }
       .hero-photo { bottom: auto; height: 580px; }
+      /* No background videos on mobile: the slides show photos instead (the skyline, hero-ships.jpg,
+         hero-numbers.jpg, hero-advice.jpg and hero-plan.jpg, and the skyline again on slides 6-8, which repeat
+         slide 1), and the JS never downloads or plays the videos
+         at this width */
+      .hero-photo video { display: none; }
+      .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
+      .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
+      .hero-photo--intro, .hero-photo--landscape, .hero-photo--cargo, .hero-photo--lights { background-image: url("Website%20Assets/london_skyline_4k_16x9.jpg"); background-position: 70% 100%; }
+      .hero-photo--auto { background-image: url("Website%20Assets/hero-advice.jpg"); }
+      .hero-photo--plan { background-image: url("Website%20Assets/hero-plan.jpg"); }
       .hero-photo::after { background: linear-gradient(180deg, rgba(0,0,0,0) 55%, #000 100%), rgba(8,18,38,.25); }
       .hero-slide { text-align: center; }
       .hero-slide .lede { margin-inline: auto; }
@@ -244,7 +258,7 @@
     .js .is-loaded .fade-in { opacity: 1; transform: none; }
 
     /* Hero checklist card */
-    .tick-card { position: relative; background: var(--navy); color: #fff; border-radius: 28px; padding: var(--s4); box-shadow: 0 2px 4px rgba(12, 33, 67, .06), 0 24px 48px -16px rgba(12, 33, 67, .28); overflow: hidden; isolation: isolate; }
+    .tick-card { position: relative; scale: .95; background: var(--navy); color: #fff; border-radius: 28px; padding: var(--s4); box-shadow: 0 2px 4px rgba(12, 33, 67, .06), 0 24px 48px -16px rgba(12, 33, 67, .28); overflow: hidden; isolation: isolate; }
     .tick-card::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(80% 60% at 100% 0%, rgba(17,90,219,.55), transparent 70%), radial-gradient(60% 50% at 0% 100%, rgba(0,113,188,.35), transparent 70%); }
     .tick-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
     .tick-card-head .h-card { font-size: 1.9rem; }
@@ -639,16 +653,21 @@
     <section class="hero grain" id="home" aria-labelledby="hero-title">
       <div class="hero-bgs" aria-hidden="true">
         <div class="hero-photo"></div>
-        <div class="hero-photo hero-photo--mtd" data-hs-photo="1"></div>
-        <div class="hero-photo hero-photo--cloud" data-hs-photo="2"></div>
-        <div class="hero-photo hero-photo--auto" data-hs-photo="3"><video src="Website%20Assets/329674_medium.mp4" poster="Website%20Assets/hero-ct600-poster.jpg" muted playsinline preload="none" aria-hidden="true"></video></div>
-        <div class="hero-photo hero-photo--plan" data-hs-photo="4"></div>
+        <div class="hero-photo hero-photo--intro is-active" data-hs-photo="0"><video src="Website%20Assets/hero-city-blocks.mp4" poster="Website%20Assets/hero-city-blocks-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--mtd" data-hs-photo="1"><video src="Website%20Assets/hero-mountain-climb.mp4" poster="Website%20Assets/hero-mountain-climb-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--cloud" data-hs-photo="2"><video src="Website%20Assets/hero-ships.mp4" poster="Website%20Assets/hero-ships-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--auto" data-hs-photo="3"><video src="Website%20Assets/hero-tractor.mp4" poster="Website%20Assets/hero-tractor-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--plan" data-hs-photo="4"><video src="Website%20Assets/hero-walk.mp4" poster="Website%20Assets/hero-walk-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--landscape" data-hs-photo="5"><video src="Website%20Assets/hero-landscape.mp4" poster="Website%20Assets/hero-landscape-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--cargo" data-hs-photo="6"><video src="Website%20Assets/hero-cargo.mp4" poster="Website%20Assets/hero-cargo-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+        <div class="hero-photo hero-photo--lights" data-hs-photo="7"><video src="Website%20Assets/hero-city-lights.mp4" poster="Website%20Assets/hero-city-lights-poster.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
       </div>
       <div class="wrap hero-grid">
         <div>
-          <!-- Slideshow: the practice intro, then four insights; rotates every 8s with prev/next/pause controls -->
+          <!-- Slideshow: the practice intro, four insights, then the intro three more times (each over its own
+               video); rotates every 8s with prev/next/pause controls -->
           <div class="hero-slides" id="hero-slides" aria-roledescription="carousel" aria-label="ClearView Accounting insights" aria-live="off">
-            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 5">
+            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 8">
               <h1 class="display h-section hs-title" id="hero-title">
                 <span class="line"><span>Elevate your</span></span>
                 <span class="line"><span>financial future</span></span>
@@ -657,7 +676,7 @@
               </h1>
               <p class="lede mt-6">Complete, reliable and personal accounting for sole traders, growing companies and individuals. We handle the tax returns, payroll, VAT and filings, so you can get on with running your business.</p>
             </div>
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 of 5">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 of 8">
               <h2 class="display h-section hs-title">
                 <span class="line"><span>Ready for</span></span>
                 <span class="line"><span>Making Tax</span></span>
@@ -665,7 +684,7 @@
               </h2>
               <p class="lede mt-6">From April 2027, sole traders and landlords earning over £30,000 send HMRC quarterly updates, and we'll have you set up well before then.</p>
             </div>
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 of 5">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 of 8">
               <h2 class="display h-section hs-title">
                 <span class="line"><span>Your numbers,</span></span>
                 <span class="line"><span>live, not</span></span>
@@ -673,20 +692,47 @@
               </h2>
               <p class="lede mt-6">With cloud bookkeeping in Xero, you can see your cash flow and the tax you owe as it happens, so there are no surprises in January.</p>
             </div>
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 of 5">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 of 8">
               <h2 class="display h-section hs-title">
                 <span class="line"><span>Less data entry,</span></span>
                 <span class="line"><span class="blue">more advice.</span></span>
               </h2>
               <p class="lede mt-6">Bank feeds and receipt capture now do the typing, which frees our time to find you savings and plan ahead with you.</p>
             </div>
-            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="5 of 5">
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="5 of 8">
               <h2 class="display h-section hs-title">
                 <span class="line"><span>Plan before</span></span>
                 <span class="line"><span>5 April,</span></span>
                 <span class="line"><span class="blue">not after.</span></span>
               </h2>
               <p class="lede mt-6">Pension contributions, allowances and dividend timing only count if they're used in time, so we review yours before the tax year ends.</p>
+            </div>
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="6 of 8">
+              <h2 class="display h-section hs-title">
+                <span class="line"><span>Elevate your</span></span>
+                <span class="line"><span>financial future</span></span>
+                <span class="line"><span>at ClearView</span></span>
+                <span class="line"><span class="blue">Accounting.</span></span>
+              </h2>
+              <p class="lede mt-6">Complete, reliable and personal accounting for sole traders, growing companies and individuals. We handle the tax returns, payroll, VAT and filings, so you can get on with running your business.</p>
+            </div>
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="7 of 8">
+              <h2 class="display h-section hs-title">
+                <span class="line"><span>Elevate your</span></span>
+                <span class="line"><span>financial future</span></span>
+                <span class="line"><span>at ClearView</span></span>
+                <span class="line"><span class="blue">Accounting.</span></span>
+              </h2>
+              <p class="lede mt-6">Complete, reliable and personal accounting for sole traders, growing companies and individuals. We handle the tax returns, payroll, VAT and filings, so you can get on with running your business.</p>
+            </div>
+            <div class="hero-slide" role="group" aria-roledescription="slide" aria-label="8 of 8">
+              <h2 class="display h-section hs-title">
+                <span class="line"><span>Elevate your</span></span>
+                <span class="line"><span>financial future</span></span>
+                <span class="line"><span>at ClearView</span></span>
+                <span class="line"><span class="blue">Accounting.</span></span>
+              </h2>
+              <p class="lede mt-6">Complete, reliable and personal accounting for sole traders, growing companies and individuals. We handle the tax returns, payroll, VAT and filings, so you can get on with running your business.</p>
             </div>
           </div>
           <div class="hero-actions fade-in" style="--d:.55s">
@@ -697,7 +743,7 @@
               <button class="hero-ctrl" type="button" data-hs="toggle" aria-controls="hero-slides" aria-label="Pause slideshow"><svg class="i-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="i-play" aria-hidden="true"><use href="#i-play"/></svg></button>
             </div>
           </div>
-          <div class="hero-meter fade-in" style="--d:.6s" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+          <div class="hero-meter fade-in" style="--d:.6s" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
         </div>
 
         <aside class="tick-card fade-in" style="--d:.35s" aria-label="Filings we handle for you" data-parallax="0.05">
@@ -1156,25 +1202,28 @@
     $$('.tick-item').forEach((li, i) => setTimeout(() => li.classList.add('is-done'), reduce ? 0 : 1100 + i * 380));
 
     // Filing selector on the hero card. The page opens on the plain list of four filings under "Your Year,
-    // Ticked Off". From then on the list is a looping wheel of five: a ClearView item (added here, sitting
-    // just out of view above VAT return) and the four filings. Each slide spins the wheel (the shortest
-    // way, up or down) to put its item under the selector: slide 1 ClearView, slides 2-5 filings 1-4, and
-    // the heading then changes to that item's name. The wheel is three copies of the five items, so it can
-    // loop; after each spin it snaps back to the middle copy without a transition.
+    // Ticked Off". From then on the list is a looping wheel of eight, one per slide and in slide order: a
+    // ClearView item (added here, sitting just out of view above VAT return), the four filings, then three
+    // more ClearView items for slides 6-8 (which repeat slide 1). Each slide spins the wheel (the shortest
+    // way, up or down) to put its item under the selector, and the heading then changes to that item's
+    // name. The wheel is three copies of the eight items, so it can loop; after each spin it snaps back to
+    // the middle copy without a transition.
     const wheel = $('.tick-wheel');
     if (wheel) {
       const win = $('.tick-window', wheel), track = $('.tick-list', wheel), title = $('.tc-title');
       const real = $$('.tick-item', track), brand = real[0].cloneNode(true);
       $('p', brand).firstChild.textContent = 'ClearView';
-      $('small', brand).textContent = 'Accounting, based in Luton';
+      $('small', brand).textContent = 'Expert Accounting Solutions';
       brand.classList.add('is-done');
       brand.setAttribute('aria-hidden', 'true');
+      const extra = [1, 2, 3].map(() => brand.cloneNode(true));
       track.prepend(brand);
-      const base = [brand, ...real], N = base.length;
+      track.append(...extra);
+      const base = [brand, ...real, ...extra], N = base.length;
       const copy = () => base.map(li => { const c = li.cloneNode(true); c.classList.add('is-done'); c.setAttribute('aria-hidden', 'true'); return c; });
       track.prepend(...copy()); track.append(...copy());
       const items = $$('.tick-item', track), names = base.map(li => $('p', li).firstChild.textContent.trim());
-      let pos = N / 2, spinTimer = 0, titleTimer = 0; // starts centred on the four filings (items 1-4)
+      let pos = 2.5, spinTimer = 0, titleTimer = 0; // starts centred on the four filings (items 1-4)
       // Track offset of the centre of fractional position a (in items, counted from the middle copy)
       const centre = a => {
         const k = a + N, i = Math.min(Math.floor(k), items.length - 2), f = k - i;
@@ -1226,19 +1275,26 @@
         img.src = getComputedStyle(p).backgroundImage.replace(/^url\(["']?|["']?\)$/g, '');
         return [p, (img.decode ? img.decode() : new Promise(r => { img.onload = img.onerror = r; })).catch(() => {})];
       }));
-      // A slide's background video (slide 4) plays its first CLIP seconds each time the slide comes in, then
-      // holds that frame. Until it can play, its poster (the first frame) shows; reduced motion keeps the
-      // poster. The download starts once the page has loaded, so it doesn't compete with the first paint.
-      const hsVideos = hsPhotos.map(p => $('video', p)).filter(Boolean), CLIP = 4;
-      hsVideos.forEach(v => {
-        // Checked every frame, plus on timeupdate for when frames are throttled (e.g. a background tab);
-        // an overshoot is wound back so the held frame is always the one at CLIP
-        const stop = () => { v.pause(); if (v.currentTime > CLIP + .1) v.currentTime = CLIP; };
-        const hold = () => { if (v.currentTime >= CLIP) stop(); else if (!v.paused) requestAnimationFrame(hold); };
-        v.addEventListener('playing', hold);
-        v.addEventListener('timeupdate', () => { if (!v.paused && v.currentTime >= CLIP) stop(); });
-        if (!reduce) addEventListener('load', () => { v.preload = 'auto'; v.load(); }, { once: true });
-      });
+      // Each slide's background video plays from the start each time the slide comes in and
+      // keeps playing (looping if the slideshow is paused on it) until the next slide has faded in over it.
+      // Until it can play, its poster (the first frame) shows; reduced motion keeps the poster. Downloads
+      // start once the page has loaded, so they don't compete with the first paint, and run one after the
+      // other in slide order (slide 1's first, as it's showing), so they don't compete for bandwidth.
+      // Mobile (below 768px) gets no videos at all: those slides show photos instead (see the CSS), and
+      // a video only plays if the window is widened past the breakpoint.
+      const hsVideos = hsPhotos.map(p => $('video', p)).filter(Boolean);
+      const mobileMQ = matchMedia('(max-width: 767px)'), noVideo = () => reduce || mobileMQ.matches;
+      mobileMQ.addEventListener('change', () => hsVideos.forEach(v => {
+        if (noVideo()) v.pause();
+        else if (playing && v.parentElement.classList.contains('is-active')) v.play().catch(() => {});
+      }));
+      if (!noVideo()) addEventListener('load', () => hsVideos.reduce((prev, v) => prev.then(() => new Promise(done => {
+        v.addEventListener('canplaythrough', done, { once: true });
+        v.addEventListener('error', done, { once: true });
+        setTimeout(done, 10000);
+        v.preload = 'auto'; v.load();
+        if (playing && v.parentElement.classList.contains('is-active')) v.play().catch(() => {});
+      })), Promise.resolve()), { once: true });
       let photoTimer = 0, cur = 0, playing = !reduce, inView = true, remaining = DUR, t0 = 0, timer = null;
       const run = () => {
         const on = playing && inView && !document.hidden;
@@ -1265,14 +1321,17 @@
           const shown = p.classList.contains('is-active') || p.classList.contains('is-prev');
           p.classList.toggle('is-prev', !!next && shown);
           p.classList.remove('is-active');
-          $('video', p)?.pause();
+          // Paused only once the hand-off is over, so it doesn't freeze while the next slide fades in
+          const v = $('video', p);
+          if (v && !v.paused) setTimeout(() => { if (!p.classList.contains('is-active')) v.pause(); }, 1300);
         });
         if (next) photoReady.get(next).then(() => {
           if (slide !== cur) return;
           next.classList.remove('is-prev');
           next.classList.add('is-active');
           const v = $('video', next);
-          if (v && !reduce) { v.currentTime = 0; v.play().catch(() => {}); }
+          // While the slideshow is paused, the incoming video waits on its first frame until play is pressed
+          if (v && !noVideo()) { v.currentTime = 0; if (playing) v.play().catch(() => {}); }
           photoTimer = setTimeout(() => hsPhotos.forEach(p => p.classList.remove('is-prev')), 1300);
         });
         document.dispatchEvent(new CustomEvent('heroslide', { detail: cur }));
@@ -1284,6 +1343,10 @@
       };
       const setPlaying = on => {
         playing = on;
+        // The pause button pauses the background videos too (including one still fading out); play resumes
+        // the current slide's video from where it stopped
+        if (!on) hsVideos.forEach(v => v.pause());
+        else if (!noVideo()) hsVideos.forEach(v => { if (v.parentElement.classList.contains('is-active')) v.play().catch(() => {}); });
         hsToggle.classList.toggle('is-paused', !on);
         hsToggle.setAttribute('aria-label', on ? 'Pause slideshow' : 'Play slideshow');
         hsWrap.setAttribute('aria-live', on ? 'off' : 'polite');
@@ -1542,7 +1605,9 @@
     const syncHeroFade = () => {
       let top = 0;
       for (let el = tickCard; el && el !== heroPhoto.offsetParent; el = el.offsetParent) top += el.offsetTop;
-      heroPhoto.parentElement.style.setProperty('--fade-start', `${top + tickCard.offsetHeight * .85 - heroPhoto.offsetTop}px`);
+      // The card is drawn at scale .95 about its centre, so find where 85% of its drawn height lands.
+      const s = parseFloat(getComputedStyle(tickCard).scale) || 1;
+      heroPhoto.parentElement.style.setProperty('--fade-start', `${top + tickCard.offsetHeight * (.5 + .35 * s) - heroPhoto.offsetTop}px`);
     };
     addEventListener('resize', syncHeroFade);
     document.fonts ? document.fonts.ready.then(syncHeroFade) : syncHeroFade();
