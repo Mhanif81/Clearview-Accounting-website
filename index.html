@@ -187,7 +187,9 @@
     /* City skyline under every slide: a brand-blue multiply tint, then a black tint that fades in from
        85% of the way down the tick card (--fade-start, set from JS) to solid at the marquee strip */
     /* Starts below the header bar */
-    .hero-photo { position: absolute; inset: var(--header-h) 0 0; background: url("Website%20Assets/london_skyline_4k_16x9.jpg") 70% 100% / cover no-repeat; filter: saturate(.75); }
+    /* The skyline image is set for mobile only (see the max-width: 767px block): on desktop every slide's
+       video layer covers this base layer, so it would be a wasted download */
+    .hero-photo { position: absolute; inset: var(--header-h) 0 0; background: 70% 100% / cover no-repeat; filter: saturate(.75); }
     .hero-photo::before, .hero-photo::after { content: ""; position: absolute; inset: 0; }
     .hero-photo::before { background: rgba(17,90,219,.16); mix-blend-mode: multiply; }
     /* Black fade at the bottom, over an even navy shade across the whole photo that lifts the white hero text */
@@ -236,7 +238,7 @@
       .hero-photo video { display: none; }
       .hero-photo--mtd { background-image: url("Website%20Assets/hero-ships.jpg"); background-position: 60% 62%; }
       .hero-photo--cloud { background-image: url("Website%20Assets/hero-numbers.jpg"); background-position: 50% 55%; }
-      .hero-photo--intro, .hero-photo--landscape, .hero-photo--cargo, .hero-photo--lights { background-image: url("Website%20Assets/london_skyline_4k_16x9.jpg"); background-position: 70% 100%; }
+      .hero-photo:not([data-hs-photo]), .hero-photo--intro, .hero-photo--landscape, .hero-photo--cargo, .hero-photo--lights { background-image: url("Website%20Assets/london_skyline_4k_16x9.jpg"); background-position: 70% 100%; }
       .hero-photo--auto { background-image: url("Website%20Assets/hero-advice.jpg"); }
       .hero-photo--plan { background-image: url("Website%20Assets/hero-plan.jpg"); }
       .hero-photo::after { background: linear-gradient(180deg, rgba(0,0,0,0) 55%, #000 100%), rgba(8,18,38,.25); }
